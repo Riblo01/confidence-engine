@@ -9,6 +9,8 @@ const flow = [
 
 
 // Research-grounded accuracy data (2024–2025 benchmarks)
+// [1] Meta Engineering Blog — real production system, not a peer-reviewed paper
+// [5] SynergyRCA removed — paper name/ID could not be verified
 const researchRows = [
   { system: 'Meta Llama 2 — production system', accuracy: '42%', withValidation: false, ref: 1 },
   { system: 'AIOpsLab — GPT-4 (zero-shot)', accuracy: '49%', withValidation: false, ref: 2 },
@@ -16,18 +18,18 @@ const researchRows = [
   { system: 'AIOpsLab — FLASH (best unvalidated)', accuracy: '59%', withValidation: false, ref: 2 },
   { system: 'RCAEval — ceiling (no specialized method)', accuracy: '52%', withValidation: false, ref: 3 },
   { system: 'LLMRCA — causal graph + verification', accuracy: '93%', withValidation: true, ref: 4 },
-  { system: 'SynergyRCA — RAG + expert prompts', accuracy: '88–92%', withValidation: true, ref: 5 },
   { system: 'ARGUS — specialized validation agent', accuracy: '66%', withValidation: true, ref: 2 },
 ];
 
 const references = [
   {
     id: 1,
-    authors: 'Zheng et al. (Meta AI)',
+    authors: 'Meta Engineering',
     year: '2024',
-    title: 'AI-assisted Root Cause Analysis for Incident Response at Scale',
-    venue: 'Meta Engineering Blog / ZenML LLMOps Database',
-    url: 'https://www.zenml.io/llmops-database/ai-assisted-root-cause-analysis-system-for-incident-response',
+    title: 'Leveraging AI for efficient incident response',
+    venue: 'Engineering at Meta (tech blog) · June 24, 2024',
+    url: 'https://engineering.fb.com/2024/06/24/data-infrastructure/leveraging-ai-for-efficient-incident-response/',
+    note: 'Industry blog post — not peer-reviewed',
   },
   {
     id: 2,
@@ -52,14 +54,6 @@ const references = [
     title: 'LLM for Automated Root Cause Analysis in Microservices',
     venue: 'JISEM Journal, Vol. 2024',
     url: 'https://jisem-journal.com/index.php/journal/article/view/2100',
-  },
-  {
-    id: 5,
-    authors: 'Arya et al.',
-    year: '2024',
-    title: 'SynergyRCA: Synergistic Multi-agent Root Cause Analysis for Microservices',
-    venue: 'arXiv preprint',
-    url: 'https://arxiv.org/abs/2401.13054',
   },
 ];
 
@@ -132,7 +126,7 @@ export default function ProblemStatementSection() {
           <div className="bc-gain-line" />
           <div className="bc-gain-badge">
             <TrendingUp size={18} />
-            <span className="bc-gain-pp">+34 pp</span>
+            <span className="bc-gain-pp">+27 pp</span>
             <span className="bc-gain-sub">avg improvement</span>
           </div>
           <div className="bc-gain-line" />
@@ -142,16 +136,15 @@ export default function ProblemStatementSection() {
         <div className="bc-card bc-card--after">
           <div className="bc-card-eyebrow bc-eyebrow--green">With validation layer</div>
           <div className="bc-score bc-score--green">
-            <span className="bc-score-num">88</span>
+            <span className="bc-score-num">66</span>
             <span className="bc-score-sep">–</span>
             <span className="bc-score-num">93%</span>
           </div>
-          <p className="bc-card-desc">Accuracy range with causal verification, evidence scoring, and multi-agent validation.</p>
+          <p className="bc-card-desc">Accuracy range with causal verification, evidence scoring, and specialized agent validation.</p>
           <div className="bc-studies">
             {[
               { label: 'LLMRCA (causal graph)', val: '93%', ref: 4 },
-              { label: 'SynergyRCA (RAG)', val: '88–92%', ref: 5 },
-              { label: 'ARGUS (specialized)', val: '66%', ref: 2 },
+              { label: 'ARGUS (specialized agent)', val: '66%', ref: 2 },
             ].map((s) => (
               <div key={s.label} className="bc-study-row">
                 <span className="bc-study-label">{s.label}</span>
@@ -228,6 +221,9 @@ export default function ProblemStatementSection() {
                 </a>
                 .{' '}
                 <span className="bib-venue">{ref.venue}</span>.
+                {'note' in ref && ref.note && (
+                  <span className="bib-note"> ⚠ {ref.note}</span>
+                )}
               </span>
             </li>
           ))}

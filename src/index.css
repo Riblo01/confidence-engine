@@ -1091,6 +1091,12 @@ body {
   font-style: italic;
 }
 
+.bib-note {
+  color: #f59e0b;
+  font-size: 0.72rem;
+  font-style: italic;
+}
+
 .input-banner {
   border: 1px solid rgba(59, 130, 246, 0.35);
   border-radius: 8px;
