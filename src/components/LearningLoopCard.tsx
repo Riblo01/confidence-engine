@@ -1,57 +1,115 @@
-import { Database, ArrowRight } from 'lucide-react';
+import type { CSSProperties } from 'react';
+import { ArrowRight, BrainCircuit, CheckCircle2, Database, GitBranch, ShieldCheck, SlidersHorizontal } from 'lucide-react';
 
 export default function LearningLoopCard() {
   const steps = [
-    { label: 'Feedback', color: '#3b82f6', desc: 'Reviewer classifies validation quality' },
-    { label: 'Weight Adjustment', color: '#f59e0b', desc: 'Pattern scoring changes by outcome' },
-    { label: 'Harness Improvement', color: '#8b5cf6', desc: 'Evaluation criteria become sharper' },
-    { label: 'Better Evaluations', color: '#22c55e', desc: 'Future RCA checks become more accurate' },
+    {
+      label: 'Human Verdict',
+      Icon: CheckCircle2,
+      color: '#3b82f6',
+      desc: 'SRE marks the RCA as useful, incomplete, contradicted or unsafe.',
+    },
+    {
+      label: 'Pattern Memory',
+      Icon: GitBranch,
+      color: '#f59e0b',
+      desc: 'The incident is grouped by Kubernetes pattern, telemetry signals and outcome.',
+    },
+    {
+      label: 'Scoring Tuning',
+      Icon: SlidersHorizontal,
+      color: '#8b5cf6',
+      desc: 'Weights and validation harnesses are adjusted for future similar cases.',
+    },
+    {
+      label: 'Safer RCA',
+      Icon: ShieldCheck,
+      color: '#22c55e',
+      desc: 'The next analysis gets stronger checks before engineers act on it.',
+    },
+  ];
+
+  const capturedSignals = [
+    'Final verdict',
+    'Rejected hypotheses',
+    'Validated evidence',
+    'Missing telemetry',
+    'Engineer correction',
+    'Recommended action outcome',
+  ];
+
+  const learningImpact = [
+    { label: 'Useful RCA', value: '89%', tone: 'good' },
+    { label: 'Incorrect RCA', value: '4%', tone: 'bad' },
+    { label: 'Harness updates', value: '+17', tone: 'warn' },
   ];
 
   return (
-    <div className="rounded-lg overflow-hidden" style={{ background: '#161b22', border: '1px solid #21262d' }}>
-      <div className="px-4 py-3 flex items-center gap-2" style={{ borderBottom: '1px solid #21262d', background: '#1c2128' }}>
-        <Database size={14} color="#f59e0b" />
-        <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#8b949e' }}>Learning Loop</span>
-        <span className="ml-auto text-xs px-2 py-0.5 rounded" style={{ background: '#f59e0b22', color: '#f59e0b' }}>
-          Future Integration
-        </span>
+    <div className="learning-card">
+      <div className="learning-card-header">
+        <div>
+          <div className="learning-eyebrow">
+            <Database size={14} />
+            Learning Loop
+          </div>
+          <h3>How the platform gets more reliable after every reviewed incident</h3>
+        </div>
+        <span className="learning-badge">Future Integration</span>
       </div>
-      <div className="p-4">
-        <div className="grid gap-3 md:grid-cols-[1fr_220px]">
-          <p className="text-sm leading-7" style={{ color: '#8b949e' }}>
-            In production, feedback is aggregated by pattern to improve future confidence scoring and harness templates.
-          </p>
-          <div className="rounded-md border border-white/10 bg-white/[0.03] p-3 text-xs">
-            <div className="font-semibold uppercase tracking-[0.16em]" style={{ color: '#f59e0b' }}>Example pattern</div>
-            <div className="mt-2 font-mono text-slate-200">Redis Saturation</div>
-            <div className="mt-3 grid grid-cols-3 gap-2 text-center">
-              <span><strong className="block text-white">120</strong>evaluations</span>
-              <span><strong className="block text-green-400">89%</strong>useful</span>
-              <span><strong className="block text-red-400">4%</strong>incorrect</span>
+
+      <div className="learning-card-body">
+        <div className="learning-hero">
+          <div>
+            <p>
+              After an SRE accepts, corrects or rejects an RCA, the platform stores that decision as operational
+              feedback. Future RCA validations use that feedback to detect weak evidence earlier, penalize repeated
+              mistakes and strengthen the scoring model for similar Kubernetes incidents.
+            </p>
+            <div className="learning-signal-grid">
+              {capturedSignals.map((signal) => (
+                <span key={signal}>{signal}</span>
+              ))}
+            </div>
+          </div>
+
+          <div className="learning-pattern-card">
+            <div className="learning-pattern-title">Example learned pattern</div>
+            <div className="learning-pattern-name">Redis Saturation</div>
+            <div className="learning-pattern-subtitle">Grouped from reviewed RCA decisions</div>
+            <div className="learning-impact-grid">
+              {learningImpact.map((item) => (
+                <div key={item.label} className={`learning-impact ${item.tone}`}>
+                  <strong>{item.value}</strong>
+                  <span>{item.label}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
-        <div className="mt-5 flex items-stretch gap-1 overflow-x-auto pb-1">
+        <div className="learning-flow">
           {steps.map((step, i) => (
-            <div key={i} className="flex items-center gap-1 shrink-0">
-              <div className="text-center">
-                <div
-                  className="rounded px-2 py-1.5 text-xs font-semibold mb-1"
-                  style={{ background: `${step.color}22`, color: step.color, border: `1px solid ${step.color}33`, minWidth: 80 }}
-                >
-                  {step.label}
+            <div key={step.label} className="learning-flow-item">
+              <div className="learning-flow-node" style={{ '--learning-color': step.color } as CSSProperties}>
+                <div className="learning-flow-icon">
+                  <step.Icon size={18} />
                 </div>
-                <div className="text-xs" style={{ color: '#6e7681', maxWidth: 90, lineHeight: '1.3' }}>{step.desc}</div>
+                <strong>{step.label}</strong>
+                <p>{step.desc}</p>
               </div>
-              {i < steps.length - 1 && <ArrowRight size={12} color="#30363d" className="shrink-0 mb-3" />}
+              {i < steps.length - 1 && <ArrowRight size={16} className="learning-flow-arrow" />}
             </div>
           ))}
         </div>
-        <div className="mt-3 p-2.5 rounded text-xs" style={{ background: '#21262d', color: '#8b949e', lineHeight: '1.5' }}>
-          <span style={{ color: '#f59e0b' }}>Table schema: </span>
-          <span className="font-mono">incident_id, verdict, feedback_type, engineer_id, timestamp, pattern_matched, score</span>
+
+        <div className="learning-storage">
+          <div className="learning-storage-icon">
+            <BrainCircuit size={18} />
+          </div>
+          <div>
+            <strong>Feedback record schema</strong>
+            <code>incident_id, verdict, feedback_type, engineer_id, timestamp, pattern_matched, score_delta</code>
+          </div>
         </div>
       </div>
     </div>

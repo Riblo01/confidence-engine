@@ -9,7 +9,7 @@ export const incidents: Incident[] = [
     status: 'active',
     time_window: '2024-03-15 08:07 – 09:00 UTC',
     affected_service: 'nginx-frontend',
-    namespace: 'super-app-p-pdn',
+    namespace: 'frontend-prod',
     cluster: 'eks-prod-us-east-1',
     business_impact:
       'Customers may not be routed to the old customer products service. New service is handling all traffic normally with no user-facing errors.',
@@ -119,7 +119,7 @@ export const incidents: Incident[] = [
     status: 'active',
     time_window: '2024-03-16 14:22 – 15:05 UTC',
     affected_service: 'payments',
-    namespace: 'payments-pdn',
+    namespace: 'payments-prod',
     cluster: 'eks-prod-us-east-1',
     business_impact:
       'Payment processing intermittently failing due to pod restarts. Estimated 3-5% of payment requests failing during restart windows.',
@@ -223,7 +223,7 @@ export const incidents: Incident[] = [
     status: 'active',
     time_window: '2024-03-17 11:15 – 12:00 UTC',
     affected_service: 'backend-api',
-    namespace: 'catalog-pdn',
+    namespace: 'backend-prod',
     cluster: 'eks-prod-us-east-1',
     business_impact:
       'Product catalog page load times increased to 8-12 seconds. Shopping cart operations timing out in 15% of cases. Customer-visible latency degradation.',
@@ -326,7 +326,7 @@ export const incidents: Incident[] = [
     status: 'active',
     time_window: '2024-03-18 09:30 – 10:45 UTC',
     affected_service: 'orders',
-    namespace: 'payments-pdn',
+    namespace: 'orders-prod',
     cluster: 'eks-prod-us-east-1',
     business_impact:
       'Payment processing latency increased to 4-6 seconds. Request queuing building up. Estimated 8% of payment requests experiencing timeout errors.',
@@ -432,7 +432,7 @@ export const incidents: Incident[] = [
     status: 'active',
     time_window: '2024-03-19 03:15 – 04:30 UTC',
     affected_service: 'multiple-services (node-wide)',
-    namespace: 'super-app-p-pdn',
+    namespace: 'platform-prod',
     cluster: 'eks-prod-us-east-1',
     business_impact:
       'Multiple services evicted from node ip-10-0-14-87. Services restarting on alternative nodes with 60-90 second recovery windows. Temporary availability gaps across 6 services.',
@@ -534,7 +534,7 @@ export const incidents: Incident[] = [
     status: 'active',
     time_window: '2024-03-20 16:05 – 17:30 UTC',
     affected_service: 'notification-service',
-    namespace: 'messaging-pdn',
+    namespace: 'messaging-prod',
     cluster: 'eks-prod-us-east-1',
     business_impact:
       'Push notifications and email confirmations delayed by 15-40 minutes. Order confirmation emails not being sent. Customer complaints increasing.',
@@ -645,7 +645,7 @@ export const incidents: Incident[] = [
     status: 'active',
     time_window: '2024-03-21 10:00 – 10:35 UTC',
     affected_service: 'account-service',
-    namespace: 'accounts-pdn',
+    namespace: 'auth-prod',
     cluster: 'eks-prod-us-east-1',
     business_impact:
       'Account management features unavailable. Users cannot update profile, change password, or manage preferences. 100% of account-service requests returning 503.',
@@ -654,20 +654,20 @@ export const incidents: Incident[] = [
       { source: 'Kubernetes', signal: 'Pod Status', value: 'CrashLoopBackOff (3 pods)', status: 'critical' },
       { source: 'Dynatrace', signal: 'Availability', value: '0% (100% error rate)', status: 'critical' },
       { source: 'Kubernetes', signal: 'Readiness Probe', value: 'Failing — HTTP 404 on /health', status: 'critical' },
-      { source: 'Loki', signal: 'Startup Error', value: 'Cannot connect to DB: account-db', status: 'critical' },
+      { source: 'Loki', signal: 'Startup Error', value: 'Cannot connect to DB: auth-db', status: 'critical' },
       { source: 'ArgoCD', signal: 'Deployment Status', value: 'Degraded — new version 2.4.1', status: 'critical' },
     ],
     agent_rca: {
       agent_name: 'Kubernetes SRE Analysis Prompt',
       proposed_root_cause: 'Failed deployment v2.4.1 — application crashes on startup due to missing database secret causing connection failure',
       rca_summary:
-        'A deployment of account-service v2.4.1 was pushed at 09:58 UTC. All three new pods entered CrashLoopBackOff immediately. Loki startup logs show "Cannot connect to DB: account-db — secret DB_PASSWORD not found in environment". A new Kubernetes Secret was introduced in v2.4.1 (account-db-secret) but was not deployed to the production namespace prior to the application deployment. The readiness probe at /health returns 404 because the application fails before the HTTP server starts. The previous version v2.4.0 is still available for rollback.',
+        'A deployment of account-service v2.4.1 was pushed at 09:58 UTC. All three new pods entered CrashLoopBackOff immediately. Loki startup logs show "Cannot connect to DB: auth-db — secret DB_PASSWORD not found in environment". A new Kubernetes Secret was introduced in v2.4.1 (auth-db-secret) but was not deployed to the production namespace prior to the application deployment. The readiness probe at /health returns 404 because the application fails before the HTTP server starts. The previous version v2.4.0 is still available for rollback.',
       evidence_listed: [
         'CrashLoopBackOff on all 3 new pods immediately after deployment (Kubernetes)',
         'Loki startup logs: DB_PASSWORD secret not found in environment',
         'Readiness probe failing at /health — HTTP 404 (Kubernetes events)',
         'ArgoCD: deployment account-service-v2.4.1 at 09:58 UTC',
-        'kubectl get secrets: account-db-secret not present in accounts-pdn namespace',
+        'kubectl get secrets: auth-db-secret not present in auth-prod namespace',
         'Previous version v2.4.0 pods available for rollback',
         'DB connection string in app config references new secret name',
       ],
@@ -679,18 +679,18 @@ export const incidents: Incident[] = [
       ],
       recommended_actions: [
         'Immediate: kubectl rollout undo deployment/account-service to v2.4.0',
-        'Create missing Kubernetes secret account-db-secret in accounts-pdn namespace',
+        'Create missing Kubernetes secret auth-db-secret in auth-prod namespace',
         'Re-deploy v2.4.1 after secret is provisioned',
         'Add pre-deployment secret validation to CI/CD pipeline (GitOps gate)',
       ],
       agent_declared_confidence: 97,
     },
     timeline_events: [
-      { time: '09:58 UTC', event: 'ArgoCD deploys account-service v2.4.1 to accounts-pdn namespace', type: 'deployment' },
+      { time: '09:58 UTC', event: 'ArgoCD deploys account-service v2.4.1 to auth-prod namespace', type: 'deployment' },
       { time: '10:00 UTC', event: 'All 3 new pods enter CrashLoopBackOff — readiness probe fails immediately', type: 'detection' },
       { time: '10:02 UTC', event: 'Dynatrace alert: account-service availability drops to 0%', type: 'detection' },
       { time: '10:05 UTC', event: 'Loki startup logs: DB_PASSWORD secret not found in environment', type: 'metric' },
-      { time: '10:08 UTC', event: 'kubectl get secrets confirms account-db-secret missing from namespace', type: 'metric' },
+      { time: '10:08 UTC', event: 'kubectl get secrets confirms auth-db-secret missing from namespace', type: 'metric' },
       { time: '10:12 UTC', event: 'ArgoCD deployment history confirms v2.4.1 change and v2.4.0 rollback path', type: 'deployment' },
       { time: '10:25 UTC', event: 'RCA generated from Kubernetes SRE analysis prompt — Failed Deployment / CrashLoopBackOff', type: 'rca' },
       { time: '10:26 UTC', event: 'Confidence Engine validation complete — Trusted RCA (90%)', type: 'validation' },
@@ -698,7 +698,7 @@ export const incidents: Incident[] = [
     evidence_items: [
       { claim: 'CrashLoopBackOff on all new pods', source: 'Kubernetes API', status: 'validated', confidence_impact: 'high', detail: '3 pods in CrashLoopBackOff from first start' },
       { claim: 'Missing DB_PASSWORD secret in environment', source: 'Loki Startup Logs', status: 'validated', confidence_impact: 'high', detail: 'Explicit error message: secret not found' },
-      { claim: 'Secret account-db-secret absent from namespace', source: 'Kubernetes API (kubectl get secrets)', status: 'validated', confidence_impact: 'high', detail: 'Secret not present — confirmed directly' },
+      { claim: 'Secret auth-db-secret absent from namespace', source: 'Kubernetes API (kubectl get secrets)', status: 'validated', confidence_impact: 'high', detail: 'Secret not present — confirmed directly' },
       { claim: 'Deployment v2.4.1 introduced new secret requirement', source: 'ArgoCD / Git History', status: 'validated', confidence_impact: 'high', detail: 'New secretKeyRef added in v2.4.1 app config' },
       { claim: 'Readiness probe misconfigured', source: 'Kubernetes Events', status: 'validated', confidence_impact: 'medium', detail: 'App crashes before /health endpoint starts — probe failure is symptom not cause' },
       { claim: 'Secret provisioning process gap', source: 'CI/CD Pipeline Config', status: 'inferred', confidence_impact: 'medium', detail: 'No automated secret validation step in pipeline' },
