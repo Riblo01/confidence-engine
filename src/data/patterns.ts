@@ -1,0 +1,363 @@
+import type { Pattern } from '../types';
+
+export const patterns: Pattern[] = [
+  {
+    pattern_id: 'PAT-001',
+    name: 'Deployment Migration / Canary Deployment',
+    description:
+      'A previous or old service experiences unexpected low load because traffic was intentionally shifted to a new versioned deployment via Istio VirtualService or Kubernetes traffic splitting.',
+    expected_symptoms: [
+      'Old service receives 0 traffic',
+      'New deployment receives full traffic',
+      'No application errors in new service',
+      'HTTP 200 responses in new deployment',
+      'Deployment event shortly before traffic drop',
+      'No pod health degradation',
+    ],
+    expected_evidence: [
+      'Dynatrace: 0 requests/min on old service',
+      'Prometheus: normal traffic on new service',
+      'Istio proxy logs: HTTP 200 on new service',
+      'Kubernetes events: new deployment created',
+      'VirtualService routing rule updated',
+      'DestinationRule updated',
+    ],
+    common_root_causes: [
+      'Intentional canary deployment traffic shift',
+      'Blue/green deployment switchover',
+      'Service sunset migration',
+      'A/B testing traffic routing',
+    ],
+    recommended_validations: [
+      'Check Istio VirtualService routing weights',
+      'Confirm DestinationRule subsets',
+      'Validate deployment ownership with application team',
+      'Check ITSM change ticket',
+      'Verify GitOps commit history',
+    ],
+    common_false_positives: [
+      'Dynatrace alerting on intentional traffic migrations',
+      'SLO violations during planned switchovers',
+    ],
+    confidence_weight: 0.92,
+  },
+  {
+    pattern_id: 'PAT-002',
+    name: 'OOMKilled / Memory Exhaustion',
+    description:
+      'Pod is killed by the Linux OOM killer due to memory usage exceeding the configured container limit. Usually presents as CrashLoopBackOff or repeated restarts.',
+    expected_symptoms: [
+      'Pod restarts increasing',
+      'OOMKilled exit code (137)',
+      'Memory usage at or above 95% of limit',
+      'Error rate increase correlated with restarts',
+      'Latency spikes before kill',
+    ],
+    expected_evidence: [
+      'kubectl describe pod: OOMKilled reason',
+      'Dynatrace: memory usage > 95%',
+      'CloudWatch Container Insights: memory saturation',
+      'Pod restart count > 2 in short window',
+      'Application logs: GC pressure or memory allocation errors',
+    ],
+    common_root_causes: [
+      'Memory limit configured too low for workload',
+      'Memory leak in application code',
+      'Unexpected spike in request volume',
+      'Large in-memory dataset or cache',
+      'JVM heap misconfiguration',
+    ],
+    recommended_validations: [
+      'Review memory limit vs actual usage trend',
+      'Analyze application heap dumps',
+      'Check for recent code changes affecting memory allocation',
+      'Review HPA memory-based scaling configuration',
+    ],
+    common_false_positives: [],
+    confidence_weight: 0.94,
+  },
+  {
+    pattern_id: 'PAT-003',
+    name: 'Redis Saturation',
+    description:
+      'Redis instance becomes saturated due to connection pool exhaustion, memory saturation, or high command latency, causing dependent services to time out.',
+    expected_symptoms: [
+      'HTTP 500 / 503 errors increasing',
+      'Redis timeout errors in application logs',
+      'Connection pool exhaustion',
+      'High P99 latency',
+      'Redis command latency > 100ms',
+    ],
+    expected_evidence: [
+      'Redis INFO: connected_clients at max',
+      'Application logs: ETIMEDOUT or connection refused',
+      'Prometheus: redis_connected_clients metric saturated',
+      'Loki: Redis timeout stack traces',
+      'Grafana: latency spike correlated with Redis error rate',
+    ],
+    common_root_causes: [
+      'Connection pool misconfiguration',
+      'Missing TTL on keys causing memory growth',
+      'Traffic spike without Redis autoscaling',
+      'Large scan or keys command blocking event loop',
+      'Redis instance undersized for workload',
+    ],
+    recommended_validations: [
+      'Check Redis maxclients and connected_clients',
+      'Review Redis memory usage and eviction policy',
+      'Identify slow commands with SLOWLOG',
+      'Check connection pool size in application config',
+    ],
+    common_false_positives: [
+      'Transient network blip causing single timeout',
+    ],
+    confidence_weight: 0.88,
+  },
+  {
+    pattern_id: 'PAT-004',
+    name: 'RabbitMQ Consumer Backlog',
+    description:
+      'Message queue depth grows because consumers are failing, too slow, or insufficient in count to process incoming messages, causing downstream service timeouts.',
+    expected_symptoms: [
+      'Queue depth increasing steadily',
+      'Consumer lag growing',
+      'Message processing delays > SLA',
+      'Downstream service timeouts',
+      'Consumer pod restarts or crashes',
+    ],
+    expected_evidence: [
+      'RabbitMQ management API: queue depth > threshold',
+      'Prometheus: rabbitmq_queue_messages_ready increasing',
+      'Consumer pod logs: processing errors or panics',
+      'Loki: timeout or connection refused to downstream',
+      'Grafana: consumer throughput drop',
+    ],
+    common_root_causes: [
+      'Consumer application error causing crash loop',
+      'Downstream service unavailable blocking consumers',
+      'Insufficient consumer replicas for load',
+      'Message processing logic too slow',
+      'Poison message causing repeated failures',
+    ],
+    recommended_validations: [
+      'Check consumer pod health and logs',
+      'Verify downstream service availability',
+      'Review dead letter queue for failed messages',
+      'Check consumer prefetch count configuration',
+      'Scale consumer deployment replicas',
+    ],
+    common_false_positives: [
+      'Temporary queue build-up during deployment rolling update',
+    ],
+    confidence_weight: 0.78,
+  },
+  {
+    pattern_id: 'PAT-005',
+    name: 'HPA Max Replicas Reached',
+    description:
+      'Horizontal Pod Autoscaler reaches its configured maximum replica count while demand continues to exceed capacity, resulting in pod pending and latency degradation.',
+    expected_symptoms: [
+      'CPU usage above 85-90% across all pods',
+      'HPA MAXREPLICAS condition true',
+      'Pending pods in namespace',
+      'Latency P99 increasing',
+      'Request queue building up',
+    ],
+    expected_evidence: [
+      'kubectl get hpa: MAXPODS = current replicas',
+      'Prometheus: kube_horizontalpodautoscaler_status_current_replicas = max',
+      'Kubernetes events: FailedCreate for pending pods',
+      'Node capacity: all schedulable nodes nearly full',
+      'Dynatrace: response time degradation',
+    ],
+    common_root_causes: [
+      'HPA maxReplicas configured too low',
+      'Traffic surge beyond planned capacity',
+      'Node pool exhausted — Karpenter or cluster autoscaler not triggered',
+      'Application performance regression increasing per-request CPU',
+      'Spot instance interruptions reducing available node capacity',
+    ],
+    recommended_validations: [
+      'Check HPA spec maxReplicas vs actual load requirement',
+      'Verify Karpenter NodePool limits allow new nodes',
+      'Review cluster node capacity and pending pod reasons',
+      'Investigate root cause of CPU spike',
+    ],
+    common_false_positives: [
+      'Temporary traffic burst that resolves before impact',
+    ],
+    confidence_weight: 0.84,
+  },
+  {
+    pattern_id: 'PAT-006',
+    name: 'Node Pressure / Pod Evictions',
+    description:
+      'Kubernetes node reports MemoryPressure or DiskPressure condition, triggering the kubelet to evict pods and causing scheduling failures for replacement pods.',
+    expected_symptoms: [
+      'Pod eviction events',
+      'Node condition: MemoryPressure or DiskPressure',
+      'Node status: NotReady intermittently',
+      'Pods stuck in Pending state',
+      'Scheduling failures in cluster events',
+    ],
+    expected_evidence: [
+      'kubectl describe node: MemoryPressure=True',
+      'Kubernetes events: Evicted pod events',
+      'CloudWatch: node memory utilization > 90%',
+      'Prometheus: node_memory_MemAvailable_bytes critically low',
+      'Karpenter logs: new node provisioning triggered',
+    ],
+    common_root_causes: [
+      'Memory-intensive workload without proper limits',
+      'Node memory fragmentation',
+      'Log volume exhausting disk on node',
+      'DaemonSet overhead consuming node memory',
+      'Spot instance interruption reducing cluster capacity',
+    ],
+    recommended_validations: [
+      'Review node memory allocation vs actual usage',
+      'Check for pods without memory limits on the node',
+      'Verify disk usage on node filesystem',
+      'Review Karpenter provisioner/NodePool configuration',
+      'Check evicted pod resource requests',
+    ],
+    common_false_positives: [
+      'Transient memory spike during batch job completion',
+    ],
+    confidence_weight: 0.91,
+  },
+  {
+    pattern_id: 'PAT-007',
+    name: 'Failed Deployment / CrashLoopBackOff',
+    description:
+      'A new deployment fails because the application crashes immediately on startup due to bad configuration, missing secrets, or application bugs introduced in the release.',
+    expected_symptoms: [
+      'CrashLoopBackOff status on new pods',
+      'Readiness probe failing',
+      'HTTP 503 Service Unavailable',
+      'Deployment rollout stuck',
+      'Increasing pod restart count',
+    ],
+    expected_evidence: [
+      'kubectl describe pod: CrashLoopBackOff',
+      'kubectl logs: startup exception or panic',
+      'Kubernetes events: Readiness probe failed',
+      'Dynatrace: availability drop correlated with deployment',
+      'Deployment history: new version preceded incident',
+    ],
+    common_root_causes: [
+      'Invalid or missing environment variable or secret',
+      'Application code bug causing startup crash',
+      'Database connection failure on startup',
+      'Misconfigured readiness probe path or port',
+      'Image pull error or corrupted image',
+    ],
+    recommended_validations: [
+      'Review pod startup logs for exception',
+      'Compare environment variables between working and failing versions',
+      'Check secret and configmap availability',
+      'Verify readiness probe configuration',
+      'Execute kubectl rollout undo',
+    ],
+    common_false_positives: [],
+    confidence_weight: 0.93,
+  },
+  {
+    pattern_id: 'PAT-008',
+    name: 'Service Mesh Routing Issue',
+    description:
+      'Istio or other service mesh misconfiguration causes traffic to be dropped, misrouted, or stuck in circuit breaker open state.',
+    expected_symptoms: [
+      'HTTP 503 or connection reset errors',
+      'Subset not found errors in Envoy logs',
+      'Circuit breaker open state',
+      'Traffic routing to wrong service version',
+    ],
+    expected_evidence: [
+      'Istio proxy logs: NR (no route) or UF (upstream failure)',
+      'VirtualService configuration inconsistency',
+      'DestinationRule subset mismatch',
+      'Envoy stats: upstream_cx_connect_fail increasing',
+    ],
+    common_root_causes: [
+      'VirtualService subset name mismatch with DestinationRule',
+      'Circuit breaker threshold too aggressive',
+      'mTLS policy conflict',
+      'Incorrect traffic weight configuration',
+    ],
+    recommended_validations: [
+      'Run istioctl analyze for configuration errors',
+      'Check VirtualService and DestinationRule consistency',
+      'Review Envoy access logs for error codes',
+    ],
+    common_false_positives: [
+      'Brief 503s during Istio control plane upgrade',
+    ],
+    confidence_weight: 0.82,
+  },
+  {
+    pattern_id: 'PAT-009',
+    name: 'EndpointSlice / Service Endpoint Mismatch',
+    description:
+      'Kubernetes Service has no healthy endpoints because pods are not passing readiness checks or label selectors do not match, causing 503 errors.',
+    expected_symptoms: [
+      'HTTP 503 on all requests',
+      'Service has 0 ready endpoints',
+      'Pods Running but not Ready',
+      'kube-proxy seeing empty endpoint slice',
+    ],
+    expected_evidence: [
+      'kubectl get endpoints: no addresses',
+      'kubectl describe service: Endpoints: <none>',
+      'Pod readiness probe failure events',
+      'Label selector mismatch between service and pods',
+    ],
+    common_root_causes: [
+      'Pod label changed without updating service selector',
+      'Readiness probe misconfigured or too strict',
+      'Application not listening on expected port',
+      'Startup time exceeds readiness probe initialDelaySeconds',
+    ],
+    recommended_validations: [
+      'kubectl get endpoints <service>',
+      'Verify pod labels match service selector',
+      'Check readiness probe configuration',
+    ],
+    common_false_positives: [],
+    confidence_weight: 0.86,
+  },
+  {
+    pattern_id: 'PAT-010',
+    name: 'Dependency Timeout',
+    description:
+      'A service experiences high latency or errors because a downstream dependency (database, cache, external API) is responding slowly or not at all.',
+    expected_symptoms: [
+      'Latency P99 spike',
+      'Timeout errors in application logs',
+      'Error rate increase on dependent calls',
+      'Healthy upstream, degraded downstream',
+    ],
+    expected_evidence: [
+      'Tempo: traces showing long dependency spans',
+      'OpenTelemetry: span error on downstream call',
+      'Application logs: ETIMEDOUT or connection timeout',
+      'Prometheus: dependency_request_duration_seconds high',
+    ],
+    common_root_causes: [
+      'Database query performance regression',
+      'External API rate limiting',
+      'Network latency between availability zones',
+      'Missing connection timeout configuration',
+      'Cold start on serverless dependency',
+    ],
+    recommended_validations: [
+      'Check distributed traces in Tempo for slow spans',
+      'Review dependency health dashboards',
+      'Verify timeout configuration in service client',
+    ],
+    common_false_positives: [
+      'Single slow request triggering transient alert',
+    ],
+    confidence_weight: 0.79,
+  },
+];
