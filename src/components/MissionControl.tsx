@@ -179,6 +179,8 @@ function PrimaryActionButton({
 
   if (!currentReadyStep) return null;
 
+  if (currentReadyStep === 'submit_feedback') return null;
+
   const step = MISSION_STEPS.find((s) => s.id === currentReadyStep)!;
 
   return (
@@ -284,7 +286,14 @@ export default function MissionControl({ presentationMode }: Props) {
           allComplete={allComplete}
           completedCount={completedCount}
           onToggleAutoPlay={toggleAutoPlay}
-          onNext={() => currentReadyStep && advanceMissionStep(currentReadyStep)}
+          onNext={() => {
+            if (!currentReadyStep) return;
+            if (currentReadyStep === 'submit_feedback') {
+              submitFeedback(scenario.feedbackOptions[0]);
+              return;
+            }
+            advanceMissionStep(currentReadyStep);
+          }}
           onReset={resetDemo}
         />
       )}
