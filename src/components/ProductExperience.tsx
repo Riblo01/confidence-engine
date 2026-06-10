@@ -6,7 +6,6 @@ import { adaptivePilot } from '../data/adaptivePilot';
 import { calculateTemplateScore } from '../scoring/templateEngine';
 
 import ProductFlowNavigator from './ProductFlowNavigator';
-import StrategicFlowDiagram from './StrategicFlowDiagram';
 import InvestigationSection from './InvestigationSection';
 import SimulationWorkspace from './SimulationWorkspace';
 import BeforeAfterTrustStory from './BeforeAfterTrustStory';
@@ -190,12 +189,6 @@ export default function ProductExperience() {
       />
 
       <div className="pf-content">
-        <StrategicFlowDiagram
-          activeStepId={activeStepId}
-          visitedSteps={visitedSteps}
-          onNavigate={handleNavigate}
-        />
-
         {activeStepId === 'product-flow' && (
           <InvestigationSection
             kicker="Area 01"

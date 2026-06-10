@@ -29,15 +29,15 @@ export default function InvestigationSection({
 
         <div className="stage-brief">
           <article>
-            <span>Purpose</span>
+            <span>Input</span>
             <p>{whatIs}</p>
           </article>
           <article>
-            <span>Product action</span>
+            <span>Engine action</span>
             <p>{whatDoes}</p>
           </article>
           <article>
-            <span>Output / value</span>
+            <span>Output</span>
             <p>{whyMatters ?? howWorks}</p>
           </article>
         </div>

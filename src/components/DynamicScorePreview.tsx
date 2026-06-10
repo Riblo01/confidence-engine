@@ -59,14 +59,14 @@ export default function DynamicScorePreview({ result }: Props) {
         {result.biggestContributor && (
           <div className="flex items-center gap-2 text-green-400">
             <TrendingUp size={13} />
-            <span className="text-gray-400">Biggest contributor:</span>
+            <span className="text-gray-400">Main confidence driver:</span>
             <strong>{result.biggestContributor.name}</strong>
           </div>
         )}
         {result.biggestRiskContributor && (
           <div className="flex items-center gap-2 text-red-400">
             <TrendingDown size={13} />
-            <span className="text-gray-400">Biggest risk:</span>
+            <span className="text-gray-400">Main downgrade driver:</span>
             <strong>{result.biggestRiskContributor.name}</strong>
           </div>
         )}

@@ -83,6 +83,8 @@ export const missionScenarios: MissionScenario[] = [
     title: 'Kubernetes OOMKill — payments-prod',
     domain: 'Infrastructure',
     badge: 'K8s RCA',
+    useCaseName: 'Kubernetes RCA',
+    generatedOutputType: 'Root Cause Analysis',
     aiGeneratedOutput: `ROOT CAUSE ANALYSIS — payments-prod
 Generated: 2024-11-12T03:42:17Z  |  Agent: OpsSage-v2
 
@@ -150,6 +152,11 @@ AGENT CONFIDENCE DECLARED: 83 / 100`,
     ],
     finalScore: 78,
     finalVerdict: 'Needs Human Review',
+    decisionRoute: 'Route to Human Review',
+    mainReason:
+      'Telemetry supports the memory-leak RCA, but dependency impact and heap evidence are incomplete.',
+    keyRisk: 'Rollback may cascade to dependent services because the service dependency map is missing.',
+    evidenceStatus: '4 validated, 2 missing',
     recommendedAction:
       'Human engineer must verify service dependency impact before executing rollback. Request heap dump from live pod if still reachable.',
     feedbackOptions: [
@@ -178,10 +185,184 @@ AGENT CONFIDENCE DECLARED: 83 / 100`,
     ],
   },
   {
+    id: 'customer_support_trusted',
+    title: 'Refund Policy Response — enterprise account',
+    domain: 'Customer Experience',
+    badge: 'Support',
+    useCaseName: 'Customer Support',
+    generatedOutputType: 'Suggested customer response',
+    aiGeneratedOutput: `CUSTOMER SUPPORT RESPONSE
+Generated: 2024-11-12T05:03:41Z  |  Agent: SupportWriter-v3
+
+CUSTOMER ISSUE
+The customer asks whether a duplicate invoice can be refunded after plan renewal.
+
+SUGGESTED RESPONSE
+Apologize for the duplicate charge, confirm that the renewal policy allows refund review within 14 days, and ask for the invoice ID so the support team can validate the payment record.
+
+EVIDENCE LISTED
+• Knowledge-base policy REF-221 allows refund review within 14 days
+• CRM account status confirms active enterprise plan
+• Billing record shows duplicate invoice generated in the renewal window
+• No policy exception or legal escalation required
+
+RECOMMENDED ACTION
+Allow assisted send with standard audit logging.
+
+AGENT CONFIDENCE DECLARED: 91 / 100`,
+    inputContract: {
+      output_type: 'Customer Support Response',
+      required_evidence: [
+        'Knowledge-base policy',
+        'Customer account status',
+        'Billing record',
+        'Escalation policy check',
+      ],
+      thresholds: { trusted: 85, review: 65 },
+    },
+    evidenceSources: [
+      { id: 'e1', label: 'Refund policy REF-221', status: 'validated' },
+      { id: 'e2', label: 'Enterprise account status', status: 'validated' },
+      { id: 'e3', label: 'Duplicate invoice record', status: 'validated' },
+      { id: 'e4', label: 'Escalation policy check', status: 'validated' },
+    ],
+    confidenceDimensions: [
+      { id: 'evidence_quality', name: 'Evidence Quality', score: 94, weight: 30 },
+      { id: 'consistency', name: 'Consistency', score: 92, weight: 25 },
+      { id: 'completeness', name: 'Completeness', score: 89, weight: 20 },
+      { id: 'contradiction_risk', name: 'Contradiction Risk', score: 8, weight: 15 },
+      { id: 'actionability', name: 'Actionability', score: 93, weight: 10 },
+    ],
+    risks: [
+      {
+        id: 'r1',
+        label: 'Customer identity must still be verified before account-specific action',
+        severity: 'low',
+      },
+    ],
+    contradictions: [],
+    finalScore: 91,
+    finalVerdict: 'Trusted',
+    decisionRoute: 'Proceed',
+    mainReason:
+      'Policy, billing record, and account context all support the generated response with no critical contradictions.',
+    keyRisk: 'Identity verification is still required before disclosing account-specific details.',
+    evidenceStatus: '4 validated, 0 missing',
+    recommendedAction:
+      'Proceed with assisted send after standard identity verification and audit logging.',
+    feedbackOptions: [
+      'Useful — response sent with no changes',
+      'Partially Useful — minor tone edit needed',
+      'Incorrect — policy interpretation was wrong',
+      'Unsafe — response exposed sensitive account detail',
+    ],
+    learningUpdate: [
+      {
+        dimension_id: 'evidence_quality',
+        dimension_name: 'Evidence Quality',
+        before: 30,
+        after: 30,
+        reason:
+          'Validated policy and billing evidence confirmed that high-confidence support responses can proceed with light supervision.',
+      },
+    ],
+  },
+  {
+    id: 'spec_to_code_review',
+    title: 'Retry Handler Implementation — checkout-api',
+    domain: 'Software Engineering',
+    badge: 'Code',
+    useCaseName: 'Spec to Code',
+    generatedOutputType: 'Generated implementation',
+    aiGeneratedOutput: `SPEC TO CODE REVIEW
+Generated: 2024-11-12T05:22:10Z  |  Agent: CodeBuilder-v2
+
+USER STORY
+Add idempotent retry handling for checkout payment submission.
+
+GENERATED IMPLEMENTATION
+The implementation adds retry middleware, captures transactionId, and stores an idempotency key before submitting payment.
+
+EVIDENCE LISTED
+• Main acceptance path implemented
+• transactionId propagation added
+• Duplicate-charge guard partially covered
+• Edge-case tests for timeout and retry exhaustion missing
+
+RECOMMENDED ACTION
+Route to engineer review before merge.
+
+AGENT CONFIDENCE DECLARED: 78 / 100`,
+    inputContract: {
+      output_type: 'Generated Implementation',
+      required_evidence: [
+        'User story acceptance criteria',
+        'Unit tests',
+        'Integration tests',
+        'Security and duplicate-charge review',
+      ],
+      thresholds: { trusted: 85, review: 65 },
+    },
+    evidenceSources: [
+      { id: 'e1', label: 'Acceptance criteria mapping', status: 'validated' },
+      { id: 'e2', label: 'transactionId propagation', status: 'validated' },
+      { id: 'e3', label: 'Retry exhaustion tests', status: 'missing' },
+      { id: 'e4', label: 'Duplicate-charge edge cases', status: 'inferred' },
+      { id: 'e5', label: 'Security review', status: 'missing' },
+    ],
+    confidenceDimensions: [
+      { id: 'evidence_quality', name: 'Evidence Quality', score: 76, weight: 30 },
+      { id: 'consistency', name: 'Consistency', score: 81, weight: 25 },
+      { id: 'completeness', name: 'Completeness', score: 68, weight: 20 },
+      { id: 'security_risk', name: 'Security Risk', score: 28, weight: 15 },
+      { id: 'actionability', name: 'Actionability', score: 84, weight: 10 },
+    ],
+    risks: [
+      {
+        id: 'r1',
+        label: 'Missing timeout and retry-exhaustion tests',
+        severity: 'medium',
+      },
+      {
+        id: 'r2',
+        label: 'Duplicate-charge guard is partially inferred',
+        severity: 'medium',
+      },
+    ],
+    contradictions: [],
+    finalScore: 78,
+    finalVerdict: 'Needs Human Review',
+    decisionRoute: 'Route to Human Review',
+    mainReason:
+      'The implementation is plausible, but acceptance criteria validation and test coverage are incomplete.',
+    keyRisk: 'Missing edge-case tests could allow duplicate payment submission under retry exhaustion.',
+    evidenceStatus: '2 validated, 2 missing, 1 inferred',
+    recommendedAction:
+      'Route to engineer review and require additional tests before merge.',
+    feedbackOptions: [
+      'Useful — engineer approved after test additions',
+      'Partially Useful — implementation needed refactor',
+      'Incorrect — code did not meet acceptance criteria',
+      'Unsafe — duplicate charge risk remained',
+    ],
+    learningUpdate: [
+      {
+        dimension_id: 'completeness',
+        dimension_name: 'Completeness',
+        before: 20,
+        after: 24,
+        reason:
+          'Acceptance criteria and test evidence should carry more weight for generated code before merge.',
+      },
+    ],
+  },
+  {
     id: 'security_investigation',
     title: 'Lateral Movement Detection — auth-service',
     domain: 'Security',
     badge: 'SOC L1',
+    useCaseName: 'SOC Investigation',
+    generatedOutputType: 'Security investigation summary',
     aiGeneratedOutput: `SECURITY INVESTIGATION REPORT
 Generated: 2024-11-12T04:18:03Z  |  Agent: SecureGPT-SOC-v1
 
@@ -248,10 +429,15 @@ AGENT CONFIDENCE DECLARED: 71 / 100`,
       'Endpoint behavior sensor on data-store-01 went offline at 03:50Z — may indicate tampering OR routine maintenance (no change ticket found)',
       'Auth token spike correlates with peak traffic window — could be legitimate load event',
     ],
-    finalScore: 62,
-    finalVerdict: 'Needs Human Review',
+    finalScore: 52,
+    finalVerdict: 'Low Confidence',
+    decisionRoute: 'Blocked',
+    mainReason:
+      'The threat conclusion is weakly supported and endpoint telemetry conflicts with the proposed attack path.',
+    keyRisk: 'High false-positive risk and contradictory endpoint signals.',
+    evidenceStatus: '2 validated, 2 missing, 1 inferred, 1 contradiction',
     recommendedAction:
-      'Do NOT isolate immediately — contradiction risk is high. SOC L2 analyst must verify endpoint sensor status and confirm baseline traffic before taking action.',
+      'Do NOT act automatically. Require full analyst investigation and additional IOC validation.',
     feedbackOptions: [
       'Confirmed threat — escalation was correct',
       'False positive — routine maintenance window',

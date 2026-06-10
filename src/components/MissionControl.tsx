@@ -14,6 +14,10 @@ import TrustDecisionCard from './TrustDecisionCard';
 import HumanFeedbackAction from './HumanFeedbackAction';
 import LearningMemoryUpdate from './LearningMemoryUpdate';
 import PresentationControls from './PresentationControls';
+import MissionControlSummary from './MissionControlSummary';
+import DecisionDistributionBar from './DecisionDistributionBar';
+import DecisionRouteCard from './DecisionRouteCard';
+import PilotModeInfoPanel from './PilotModeInfoPanel';
 
 // ─── Dimension scores panel (for analyze_consistency step) ────────────────────
 
@@ -221,62 +225,121 @@ export default function MissionControl({ presentationMode }: Props) {
   ).length;
 
   const startCompleted = state.stepStatuses.start === 'completed';
+  const handleSelectRoute = (id: string) => {
+    selectScenario(id);
+    window.setTimeout(() => {
+      document.querySelector('.mc-center')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+  };
 
   return (
     <div className={`mc-shell ${presentationMode ? 'mc-presentation' : ''}`}>
-      {/* ── LEFT ZONE ─────────────────────────────────────────────────────── */}
-      <div className="mc-left">
-        <ScenarioSelector
-          scenarios={missionScenarios}
-          selectedId={state.scenarioId}
-          onSelect={selectScenario}
-        />
-        <AiInputCard scenario={scenario} visible={startCompleted} />
+      <div className="mc-intake">
+        <div className="mc-executive-head">
+          <div>
+            <span>Evaluation intake</span>
+            <h2>Select an AI-generated output and run the confidence pipeline.</h2>
+            <p>
+              The final route is intentionally hidden until the evaluation finishes. Use the scenario list below,
+              then execute the workflow step by step.
+            </p>
+          </div>
+          <PilotModeInfoPanel />
+        </div>
       </div>
 
-      {/* ── CENTER ZONE ───────────────────────────────────────────────────── */}
-      <div className="mc-center">
-        <InteractiveFlowMap
-          steps={MISSION_STEPS}
-          stepStatuses={state.stepStatuses}
-          processingStepId={state.processingStepId}
-          onStepClick={advanceMissionStep}
-        />
+      <section className="mc-workspace">
+        <div className="mc-workspace-header">
+          <div>
+            <span>Active evaluation</span>
+            <strong>{scenario.useCaseName}</strong>
+            <p>{scenario.generatedOutputType}</p>
+          </div>
+          <span className="mc-workspace-hint">Run the pipeline to reveal score, route and recommended action.</span>
+        </div>
 
-        <div className="mc-content-area">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentReadyStep ?? 'done'}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.25 }}
-              style={{ height: '100%' }}
-            >
-              <ActiveContent
-                state={state}
-                scenario={scenario}
-                onSubmitFeedback={submitFeedback}
+        <div className="mc-workspace-grid">
+          <div className="mc-left">
+            <ScenarioSelector
+              scenarios={missionScenarios}
+              selectedId={state.scenarioId}
+              onSelect={handleSelectRoute}
+            />
+            <AiInputCard scenario={scenario} visible={startCompleted} />
+          </div>
+
+          <div className="mc-center">
+            <InteractiveFlowMap
+              steps={MISSION_STEPS}
+              stepStatuses={state.stepStatuses}
+              processingStepId={state.processingStepId}
+              onStepClick={advanceMissionStep}
+            />
+
+            <div className="mc-content-area">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentReadyStep ?? 'done'}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.25 }}
+                  style={{ height: '100%' }}
+                >
+                  <ActiveContent
+                    state={state}
+                    scenario={scenario}
+                    onSubmitFeedback={submitFeedback}
+                  />
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            <div className="mc-action-area">
+              <PrimaryActionButton
+                currentReadyStep={currentReadyStep}
+                processingStepId={state.processingStepId}
+                allComplete={allComplete}
+                onAdvance={advanceMissionStep}
+                onReset={resetDemo}
               />
-            </motion.div>
-          </AnimatePresence>
+            </div>
+          </div>
+
+          <div className="mc-right">
+            <LiveConfidencePanel state={state} />
+          </div>
+        </div>
+      </section>
+
+      <section className={`mc-executive mc-results ${allComplete ? 'revealed' : 'locked'}`}>
+        <div className="mc-results-lock">
+          <span>Execution results</span>
+          <strong>{allComplete ? 'Decision routes generated' : 'Results unlock after the pipeline completes'}</strong>
+          <p>
+            {allComplete
+              ? 'The cards below summarize the evaluated routes across trusted, review and blocked outcomes.'
+              : 'Complete feedback and memory update to reveal the executive distribution and route cards.'}
+          </p>
         </div>
 
-        <div className="mc-action-area">
-          <PrimaryActionButton
-            currentReadyStep={currentReadyStep}
-            processingStepId={state.processingStepId}
-            allComplete={allComplete}
-            onAdvance={advanceMissionStep}
-            onReset={resetDemo}
-          />
-        </div>
-      </div>
-
-      {/* ── RIGHT ZONE ────────────────────────────────────────────────────── */}
-      <div className="mc-right">
-        <LiveConfidencePanel state={state} />
-      </div>
+        {allComplete && (
+          <>
+            <MissionControlSummary scenarios={missionScenarios} />
+            <DecisionDistributionBar scenarios={missionScenarios} />
+            <div className="mc-route-grid">
+              {missionScenarios.map((item) => (
+                <DecisionRouteCard
+                  key={item.id}
+                  scenario={item}
+                  selected={item.id === state.scenarioId}
+                  onSelect={handleSelectRoute}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </section>
 
       {/* ── PRESENTATION CONTROLS ─────────────────────────────────────────── */}
       {presentationMode && (
