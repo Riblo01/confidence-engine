@@ -1,20 +1,27 @@
-import { MonitorPlay, ShieldCheck } from 'lucide-react';
+import { MonitorPlay, ShieldCheck, Zap, LayoutGrid } from 'lucide-react';
 
 const evaluates = [
-  { label: 'Incident RCA', color: '#3b82f6' },
-  { label: 'Generated Code', color: '#22c55e' },
-  { label: 'SOC Analysis', color: '#ef4444' },
-  { label: 'Support Responses', color: '#f59e0b' },
-  { label: 'Compliance Reviews', color: '#8b5cf6' },
+  { label: 'Incident RCA',        color: '#3b82f6' },
+  { label: 'Generated Code',      color: '#22c55e' },
+  { label: 'SOC Analysis',        color: '#ef4444' },
+  { label: 'Support Responses',   color: '#f59e0b' },
+  { label: 'Compliance Reviews',  color: '#8b5cf6' },
   { label: 'Multi-agent Outputs', color: '#14b8a6' },
 ];
 
 interface Props {
   presentationMode: boolean;
+  explorerMode: boolean;
   onTogglePresentation: () => void;
+  onToggleExplorer: () => void;
 }
 
-export default function AppHeader({ presentationMode, onTogglePresentation }: Props) {
+export default function AppHeader({
+  presentationMode,
+  explorerMode,
+  onTogglePresentation,
+  onToggleExplorer,
+}: Props) {
   return (
     <header className="app-hero">
       <div className="max-w-screen-2xl mx-auto">
@@ -31,11 +38,34 @@ export default function AppHeader({ presentationMode, onTogglePresentation }: Pr
               </p>
             </div>
           </div>
+
           <div className="app-hero-side">
-            <button className={`presentation-toggle ${presentationMode ? 'active' : ''}`} onClick={onTogglePresentation}>
+            {/* Mode tabs */}
+            <div className="mc-mode-tabs">
+              <button
+                className={`mc-mode-tab ${!explorerMode ? 'mc-mode-tab--active' : ''}`}
+                onClick={() => explorerMode && onToggleExplorer()}
+              >
+                <Zap size={13} />
+                Mission Control
+              </button>
+              <button
+                className={`mc-mode-tab ${explorerMode ? 'mc-mode-tab--active' : ''}`}
+                onClick={() => !explorerMode && onToggleExplorer()}
+              >
+                <LayoutGrid size={13} />
+                Platform Explorer
+              </button>
+            </div>
+
+            <button
+              className={`presentation-toggle ${presentationMode ? 'active' : ''}`}
+              onClick={onTogglePresentation}
+            >
               <MonitorPlay size={15} />
               {presentationMode ? 'Presentation On' : 'Presentation Mode'}
             </button>
+
             <div className="app-hero-tags">
               {evaluates.map((b) => (
                 <span

@@ -218,3 +218,90 @@ export interface MemoryCard {
   informs: string;
   example: string;
 }
+
+// ── Mission Control types ─────────────────────────────────────────────────────
+
+export type StepStatus = 'locked' | 'ready' | 'processing' | 'completed' | 'warning' | 'blocked';
+
+export type MissionStepId =
+  | 'start'
+  | 'parse_contract'
+  | 'validate_evidence'
+  | 'analyze_consistency'
+  | 'detect_contradictions'
+  | 'calculate_confidence'
+  | 'generate_decision'
+  | 'submit_feedback'
+  | 'update_memory';
+
+export interface MissionStep {
+  id: MissionStepId;
+  label: string;
+  shortLabel: string;
+  actionLabel: string;
+  shortDescription: string;
+  iconName: string;
+}
+
+export interface MissionEvidenceSource {
+  id: string;
+  label: string;
+  status: 'validated' | 'inferred' | 'missing' | 'contradiction';
+}
+
+export interface MissionRisk {
+  id: string;
+  label: string;
+  severity: 'high' | 'medium' | 'low';
+}
+
+export interface MissionLearningUpdate {
+  dimension_id: string;
+  dimension_name: string;
+  before: number;
+  after: number;
+  reason: string;
+}
+
+export interface MissionInputContract {
+  output_type: string;
+  required_evidence: string[];
+  thresholds: { trusted: number; review: number };
+}
+
+export interface MissionScenario {
+  id: string;
+  title: string;
+  domain: string;
+  badge: string;
+  aiGeneratedOutput: string;
+  inputContract: MissionInputContract;
+  evidenceSources: MissionEvidenceSource[];
+  confidenceDimensions: { id: string; name: string; score: number; weight: number }[];
+  risks: MissionRisk[];
+  contradictions: string[];
+  finalScore: number;
+  finalVerdict: 'Trusted' | 'Needs Human Review' | 'Low Confidence';
+  recommendedAction: string;
+  feedbackOptions: string[];
+  learningUpdate: MissionLearningUpdate[];
+}
+
+export type MissionRiskLevel = 'none' | 'low' | 'medium' | 'high';
+
+export interface MissionState {
+  scenarioId: string;
+  stepStatuses: Record<MissionStepId, StepStatus>;
+  processingStepId: MissionStepId | null;
+  confidenceScore: number | null;
+  partialScore: number | null;
+  verdict: string | null;
+  evidenceCoverage: number | null;
+  contradictionCount: number;
+  riskLevel: MissionRiskLevel;
+  recommendedAction: string | null;
+  feedbackSubmitted: boolean;
+  selectedFeedback: string | null;
+  memoryUpdated: boolean;
+  autoPlay: boolean;
+}
