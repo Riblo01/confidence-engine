@@ -124,3 +124,97 @@ export interface Pattern {
   common_false_positives: string[];
   confidence_weight: number;
 }
+
+// ── Generalized product types (product-first experience) ─────────────────────
+
+export type StageOwnership = 'external' | 'confidence_engine';
+
+export interface ProductFlowStep {
+  id: string;
+  index: number;
+  label: string;
+  title: string;
+  kicker: string;
+  ownership: StageOwnership;
+  summary: string;
+}
+
+export type DimensionType = 'core' | 'domain_specific';
+
+export interface TemplateDimension {
+  id: string;
+  name: string;
+  type: DimensionType;
+  enabled: boolean;
+  weight: number;
+  example_score: number;
+  description: string;
+  question_answered: string;
+  measurement_method: string;
+}
+
+export interface DowngradeRule {
+  id: string;
+  dimension_id: string;
+  operator: 'gt' | 'lt';
+  threshold: number;
+  effect: string;
+}
+
+export interface EvaluationTemplate {
+  id: string;
+  name: string;
+  domain: string;
+  output_type: string;
+  description: string;
+  dimensions: TemplateDimension[];
+  thresholds: { trusted: number; review: number };
+  downgrade_rules: DowngradeRule[];
+  required_evidence: string[];
+}
+
+export type TemplateVerdict = 'Trusted' | 'Needs Human Review' | 'Low Confidence';
+
+export interface TemplateScoreResult {
+  score: number;
+  verdict: TemplateVerdict;
+  confidenceLevel: ConfidenceLevel;
+  warnings: string[];
+  weightSumValid: boolean;
+  weightSum: number;
+  biggestContributor: TemplateDimension | null;
+  biggestRiskContributor: TemplateDimension | null;
+  formulaPreview: string;
+  humanReviewRequired: boolean;
+}
+
+export interface PilotAdjustment {
+  dimension_id: string;
+  dimension_name: string;
+  before: number;
+  after: number;
+  reason: string;
+}
+
+export interface PilotFeedbackOutcome {
+  feedback: string;
+  count: number;
+  signal: string;
+}
+
+export interface AdaptivePilot {
+  baseline_template_id: string;
+  evaluations_run: number;
+  feedback_outcomes: PilotFeedbackOutcome[];
+  adjustments: PilotAdjustment[];
+  explanation: string;
+}
+
+export interface MemoryCard {
+  id: string;
+  name: string;
+  category?: 'Operational Memory' | 'Calibration Memory' | 'Enterprise Knowledge';
+  stores: string;
+  informs: string;
+  example: string;
+}

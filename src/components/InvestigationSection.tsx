@@ -6,6 +6,7 @@ interface Props {
   whatIs: string;
   whatDoes: string;
   howWorks: string;
+  whyMatters?: string;
   children: ReactNode;
 }
 
@@ -15,6 +16,7 @@ export default function InvestigationSection({
   whatIs,
   whatDoes,
   howWorks,
+  whyMatters,
   children,
 }: Props) {
   return (
@@ -25,18 +27,18 @@ export default function InvestigationSection({
           <h2 className="display-title section-title">{title}</h2>
         </div>
 
-        <div className="reference-grid">
-          <article className="reference-item">
-            <span>What is it?</span>
+        <div className="stage-brief">
+          <article>
+            <span>Purpose</span>
             <p>{whatIs}</p>
           </article>
-          <article className="reference-item">
-            <span>What does it do?</span>
+          <article>
+            <span>Product action</span>
             <p>{whatDoes}</p>
           </article>
-          <article className="reference-item">
-            <span>How does it work?</span>
-            <p>{howWorks}</p>
+          <article>
+            <span>Output / value</span>
+            <p>{whyMatters ?? howWorks}</p>
           </article>
         </div>
 
