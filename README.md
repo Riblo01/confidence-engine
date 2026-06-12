@@ -1,167 +1,125 @@
-# AI Confidence Engine — Kubernetes RCA Validation
+# AI Confidence Engine
 
-> Hackathon-ready demo · React + TypeScript + Tailwind CSS · Zero backend · All mock data
+> Configurable trust layer for AI-generated outputs
 
----
+Public repo: [github.com/Riblo01/confidence-engine](https://github.com/Riblo01/confidence-engine)
 
-## What Is This?
+## What This Project Is
 
-The **AI Confidence Engine** is a validation layer that sits between an AI DevOps/SRE triage agent and the engineering team acting on its output.
+AI Confidence Engine evaluates AI-generated outputs before people act on them.
 
-It answers one critical question: **Can I trust this AI-generated RCA?**
+It does not generate the output. It receives an already-generated RCA, code suggestion, support reply, security analysis, compliance review, or multi-agent result and decides whether it should be trusted, reviewed, or blocked.
 
-It does NOT generate RCA itself. It receives an RCA already produced from an AI SRE analysis prompt or any AI triage assistant and evaluates whether that RCA is trustworthy, evidence-complete, consistent, and operationally sound.
+The current product narrative is:
 
----
+External systems generate. Confidence Engine evaluates. Humans decide. Organizations learn.
 
-## Problem Statement
+## Current Product Scope
 
-AI agents can analyze Kubernetes incidents and produce Root Cause Analysis summaries using data from Dynatrace, CloudWatch, Prometheus, Loki, and other observability tools.
+The app is organized into two main views:
 
-**But how does the team know if the AI-generated RCA is correct?**
+- `Mission Control`: interactive step-by-step confidence pipeline
+- `Platform Explorer`: product walkthrough for the trust layer
 
-- What if the agent missed critical evidence?
-- What if the proposed root cause contradicts observed signals?
-- What if the recommendation is based on incomplete data?
+The current experience covers:
 
-Acting on a flawed RCA wastes engineering time and risks incorrect remediation. The Confidence Engine adds an evidence-based validation gate before the team acts.
+- product flow from input to learning
+- confidence evaluation with evidence and risk checks
+- configuration studio for templates, dimensions, weights, thresholds, and rules
+- learning and governance for feedback, auditability, and calibration
+- mission control for scenario-based decision routes
+- Kubernetes RCA deep dive as the technical proof case
 
----
+## Visual Overview
 
-## Flow
+![AI Confidence Engine main flow](docs/visuals/ai-confidence-engine-main-flow.png)
 
-```
-Kubernetes Incident
-      ↓
-AI SRE Analysis Prompt / Internal AI triage assistant
-      ↓ produces RCA
-Confidence Engine
-      ├── Evidence Validation (claim × source × status)
-      ├── Pattern Matching (10 Kubernetes operational patterns)
-      ├── Historical Similarity (matched previous incidents)
-      ├── Contradiction Risk Analysis
-      └── Scoring (weighted formula)
-      ↓
-Confidence Score + Verdict
-      ├── Trusted RCA (≥ 85%) → Proceed
-      ├── Needs Human Review (65–84%) → Validate first
-      └── Low Confidence RCA (< 65%) → Full investigation required
-      ↓
-Engineer Feedback → (future) DynamoDB Learning Loop
+```mermaid
+flowchart LR
+  A[External Systems] --> B[Confidence Engine Product]
+  C[Configuration Layer] -.-> B
+  B --> D[Decision Routes]
+  D --> E[Human Validation]
+  E --> F[Learning Loop]
 ```
 
----
+The diagram above shows the main presentation flow. The configuration layer stays separate because it defines the trust model before runtime, while the main path shows how a generated output becomes a governed decision.
 
-## Scoring Formula
+## Docs
 
-```
-overall_score =
-  evidence_quality     × 0.30
-  + rca_consistency    × 0.25
-  + historical_similarity × 0.20
-  + operational_completeness × 0.15
-  + contradiction_score × 0.10
+- [Docs index](docs/README.md)
+- [Main flow diagram](docs/visuals/ai-confidence-engine-main-flow.excalidraw)
+- [Main flow PNG](docs/visuals/ai-confidence-engine-main-flow.png)
+- [Kubernetes RCA prompt](docs/prompts/kubernetes-sre-rca-analysis.md)
 
-where contradiction_score = 100 - contradiction_risk
-```
+## Demo Structure
 
-**Confidence Levels:**
-- 85–100: High → Trusted RCA
-- 65–84: Medium → Needs Human Review
-- 40–64: Low → Low Confidence RCA
-- 0–39: Very Low → Low Confidence RCA
+### Mission Control
 
-**Verdict downgrade**: if `contradiction_risk > 50`, verdict is downgraded by one level.
+The interactive pipeline for a selected AI-generated output. It shows:
 
----
+- scenario intake
+- step-by-step evaluation
+- evidence and risk progression
+- trust decision
+- feedback and memory update
 
-## Mock Incidents (7)
+### Platform Explorer
 
-| Problem ID     | Pattern                         | Score | Verdict             |
-|----------------|---------------------------------|-------|---------------------|
-| P-260552295    | Deployment Migration / Canary   | 91%   | Trusted RCA         |
-| P-260578120    | OOMKilled / Memory Exhaustion   | 91%   | Trusted RCA         |
-| P-260564952    | Redis Saturation                | 88%   | Trusted RCA         |
-| P-260590331    | HPA Max Replicas Reached        | 83%   | Needs Human Review  |
-| P-260601882    | Node Pressure / Pod Evictions   | 91%   | Trusted RCA         |
-| P-260612740    | RabbitMQ Consumer Backlog       | 77%   | Needs Human Review  |
-| P-260623900    | Failed Deployment / CrashLoop   | 90%   | Trusted RCA         |
+The higher-level product story. It shows:
 
----
+- the product flow
+- confidence evaluation
+- configuration studio
+- learning and governance
+- use cases and deep dive
 
-## Operational Patterns (10)
+### Kubernetes Deep Dive
 
-1. Deployment Migration / Canary Deployment
-2. OOMKilled / Memory Exhaustion
-3. Redis Saturation
-4. RabbitMQ Consumer Backlog
-5. HPA Max Replicas Reached
-6. Node Pressure / Pod Evictions
-7. Failed Deployment / CrashLoopBackOff
-8. Service Mesh Routing Issue (Istio)
-9. EndpointSlice / Service Endpoint Mismatch
-10. Dependency Timeout
+The operational proof case. It demonstrates the product on incident RCA data with:
 
----
+- logs
+- metrics
+- traces
+- Kubernetes events
+- evidence correlation
+- trust decision output
 
 ## Tech Stack
 
-| Layer          | Technology            |
-|----------------|-----------------------|
-| UI Framework   | React 18 + TypeScript |
-| Build Tool     | Vite 5                |
-| Styling        | Tailwind CSS 3        |
-| Icons          | Lucide React          |
-| Backend        | None (all local mock) |
-| Persistence    | None (memory only)    |
+| Layer | Technology |
+|---|---|
+| UI | React 18 + TypeScript |
+| Build | Vite 5 |
+| Styling | CSS + Tailwind utilities |
+| Icons | Lucide React |
+| State | Local component state |
+| Backend | None |
 
----
-
-## How to Run
+## Run Locally
 
 ```bash
 cd ~/confidence-engine
 npm install
 npm run dev
-# → http://localhost:5173
 ```
 
+Open the local app at `http://localhost:5173` or the port Vite assigns.
+
 Build for production:
+
 ```bash
 npm run build
 npm run preview
 ```
 
----
+## Scope Notes
 
-## How to Connect to Real Systems (Future)
-
-| Integration            | Source                                               |
-|------------------------|------------------------------------------------------|
-| Incident trigger       | Dynatrace Problems API webhook                       |
-| RCA input              | Kubernetes SRE analysis prompt or internal AI agent  |
-| Metrics validation     | Prometheus API, CloudWatch Metrics Insights          |
-| Log evidence           | Loki HTTP API, CloudWatch Logs Insights              |
-| Trace evidence         | Tempo API, AWS X-Ray                                 |
-| Deployment history     | Kubernetes API, ArgoCD API, GitOps webhook           |
-| Pattern storage        | DynamoDB table `confidence_patterns`                 |
-| Feedback storage       | DynamoDB table `confidence_feedback`                 |
-| Score computation      | AWS Lambda function triggered per RCA               |
-| API surface            | API Gateway + Lambda (RESTful or event-driven)       |
-| OpenTelemetry          | Correlation via trace ID linking incident to RCA     |
-
----
-
-## Architecture Notes
-
-- All incident data and patterns are local TypeScript files (`src/data/`)
-- Scoring logic is a pure deterministic function (`src/scoring/engine.ts`)
-- No external API calls, no build-time env vars, no secrets
-- Feedback is stored in component state (resets on page reload — intentional for demo)
-- Extending to 7+ dimensions or new patterns requires only adding data to `src/data/incidents.ts` and `src/data/patterns.ts`
-
----
+- all data is synthetic and local
+- no external APIs are required for the demo
+- the project is designed for product demo and hackathon presentation
+- the repository is public for sharing and review
 
 ## License
 
-MIT — demo use only. Not for production deployment without security and compliance review.
+MIT for demo use.

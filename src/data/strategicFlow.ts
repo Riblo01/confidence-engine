@@ -14,7 +14,7 @@ export const strategicFlowStages: StrategicFlowStage[] = [
     id: 'input',
     label: 'Input',
     caption: 'Generated output + context',
-    stepIds: ['product-flow', 'use-cases', 'k8s-demo'],
+    stepIds: ['product-flow', 'k8s-demo'],
     input: 'RCA, support answer, compliance recommendation, security summary or code output.',
     engineAction: 'Normalize the generated output with source context, evidence and risk policy.',
     output: 'Structured confidence evaluation request.',

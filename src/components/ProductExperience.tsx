@@ -17,7 +17,6 @@ import TrustDecisionCenter from './TrustDecisionCenter';
 import InputOutputSimulator from './InputOutputSimulator';
 import LearningGovernanceOverview from './LearningGovernanceOverview';
 import KubernetesRcaDemo from './KubernetesRcaDemo';
-import ProofUseCasesOverview from './ProofUseCasesOverview';
 
 function rebalanceEnabledWeights(
   dimensions: EvaluationTemplate['dimensions'],
@@ -268,19 +267,6 @@ export default function ProductExperience() {
             hideBrief
           >
             <LearningGovernanceOverview />
-          </InvestigationSection>
-        )}
-
-        {activeStepId === 'use-cases' && (
-          <InvestigationSection
-            kicker="Area 05"
-            title="Proof and Use Cases"
-            whatIs="The proof area for domain examples and integration detail."
-            whatDoes="It shows where the same confidence engine applies after the core concept is understood."
-            howWorks="Templates and evidence requirements change by domain; the trust decision pattern stays consistent."
-            whyMatters="This is the supporting detail, not the first explanation of the product."
-          >
-            <ProofUseCasesOverview />
           </InvestigationSection>
         )}
 

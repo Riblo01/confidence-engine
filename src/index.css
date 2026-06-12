@@ -6915,6 +6915,25 @@ body {
   overflow-y: auto;
 }
 
+.mc-content-area .mc-ai-card-wrap {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.mc-content-area .mc-ai-card {
+  flex: 1;
+  min-height: 220px;
+}
+
+.mc-content-area .mc-ai-card--empty {
+  min-height: 220px;
+}
+
+.mc-content-area .mc-ai-card-output {
+  max-height: clamp(180px, 36vh, 340px);
+}
+
 .mc-content-empty {
   align-items: center;
   color: var(--mc-muted);

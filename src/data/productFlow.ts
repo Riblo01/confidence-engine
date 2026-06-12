@@ -39,20 +39,11 @@ export const productFlowSteps: ProductFlowStep[] = [
     ownership: 'confidence_engine',
     summary: 'Feedback, confidence memory, auditability and calibration.',
   },
-  {
-    id: 'use-cases',
-    index: 5,
-    label: 'Proof & Use Cases',
-    title: 'Proof and Use Cases',
-    kicker: 'Area 05',
-    ownership: 'confidence_engine',
-    summary: 'Domain examples, integration contract and advanced validation patterns.',
-  },
 ];
 
 export const k8sDemoStep: ProductFlowStep = {
   id: K8S_DEMO_STEP_ID,
-  index: 6,
+  index: 5,
   label: 'Deep Dive: Kubernetes RCA',
   title: 'Deep Dive: Kubernetes RCA Validation',
   kicker: 'Deep Dive',
