@@ -1,0 +1,74 @@
+WEBVTT
+
+1
+00:00:02.600 --> 00:00:15.790
+Pablo Ricardo Sosa Iriarte: Hi, everyone. Our project is called AI Confidence Engine. The idea is simple. Trustworthy AI needs a decision layer, not just better generation. AI can generate answers, codes.
+
+2
+00:00:15.870 --> 00:00:29.980
+Pablo Ricardo Sosa Iriarte: incident analysis or recommendations very quickly, but speed does not always mean the output is safe, complete, or supported by evidence. Confidence Engine adds a validation layer before action. It checks evidence
+
+3
+00:00:30.050 --> 00:00:44.149
+Pablo Ricardo Sosa Iriarte: missing information, contradictions, and risks before anyone relies on the AI output. Then, it routes the result into a clear decision. Trust needs human review, low confidence, or blocked.
+
+4
+00:00:44.190 --> 00:00:56.980
+Pablo Ricardo Sosa Iriarte: So, it is just not a score. It tells the organization what should happen next. In short, AI generates, confidence engine evaluates, humans decide, and the organization learns.
+
+5
+00:01:02.950 --> 00:01:04.230
+Pablo Ricardo Sosa Iriarte: For our demo.
+
+6
+00:01:04.640 --> 00:01:18.169
+Pablo Ricardo Sosa Iriarte: Here, I select one of the AI-generated outputs. The point of the demo is not generation, but validation. The confidence engine checks whether this output is safe to trust before anyone acts on it.
+
+7
+00:01:18.640 --> 00:01:28.160
+Pablo Ricardo Sosa Iriarte: I begin the evaluation and load the AI output into the pipeline. At this point, the system threads the answer as untrust, until evidence is checked.
+
+8
+00:01:29.510 --> 00:01:41.609
+Pablo Ricardo Sosa Iriarte: Now, the engine identifies what type of output it is, what evidence is required, and which threshold define trust, review, or low confidence outcomes.
+
+9
+00:01:43.670 --> 00:01:55.829
+Pablo Ricardo Sosa Iriarte: Here, the engine verifies whether the required evidence actually exists. It separates validated evidence from missing evidence, because missing contacts directly lower trust.
+
+10
+00:01:59.080 --> 00:02:12.000
+Pablo Ricardo Sosa Iriarte: Next, it scores the internal consistency of the output against the available source context. This tells us whether the narrative is coherent, or if the parts of the explanation do not line up.
+
+11
+00:02:14.460 --> 00:02:26.989
+Pablo Ricardo Sosa Iriarte: Now, the engine looks for conflicting signals, missing safeguards, or operational risk. This is where it identifies what could make the recommendation unsafe, even if some evidence looks strong.
+
+12
+00:02:29.410 --> 00:02:42.719
+Pablo Ricardo Sosa Iriarte: With evidence, consistency, completeness, and resignal collected, the engine calculates the final confidence score using WakeTech mentions. This turns escar validation into a measurable trust signal.
+
+13
+00:02:46.080 --> 00:02:58.890
+Pablo Ricardo Sosa Iriarte: The score alone is not the final product. The engine converts into a decision route such as trust, need human review, or blocked, together with the reason and the recommended next actions.
+
+14
+00:03:00.330 --> 00:03:03.850
+Pablo Ricardo Sosa Iriarte: I'm going to check a partially useful.
+
+15
+00:03:05.830 --> 00:03:16.160
+Pablo Ricardo Sosa Iriarte: A human reviewer can now confirm whether the evaluation was useful, incomplete, incorrect, or unsaved. This makes the system accountable instead of wholly automatic.
+
+16
+00:03:17.500 --> 00:03:30.400
+Pablo Ricardo Sosa Iriarte: And finally, the feedback is stored so the future evaluations can improve. That closes the loop. External systems generate, confidence engine evaluates, humans decide, and the organization learns.
+
+17
+00:03:32.310 --> 00:03:40.970
+Pablo Ricardo Sosa Iriarte: So, the full story is, our goal is to make AI generate work safer, explainable, and actionable before people rely on it.
+
+18
+00:03:41.300 --> 00:03:42.280
+Pablo Ricardo Sosa Iriarte: Thank you.
+
