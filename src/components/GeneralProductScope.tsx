@@ -8,13 +8,6 @@ const productFlow = [
   { label: 'Adaptive Learning', Icon: Brain, color: '#8b5cf6' },
 ];
 
-const mantra = [
-  { who: 'External systems', verb: 'generate.' },
-  { who: 'Confidence Engine', verb: 'evaluates.' },
-  { who: 'Humans', verb: 'decide.' },
-  { who: 'The platform', verb: 'learns.' },
-];
-
 export default function GeneralProductScope() {
   return (
     <div className="narrative-panel">
@@ -30,15 +23,6 @@ export default function GeneralProductScope() {
           investigation, a customer response, a compliance analysis, or the final answer of a
           multi-agent workflow.
         </p>
-      </div>
-
-      <div className="pf-hero-mantra">
-        {mantra.map((m) => (
-          <div key={m.who} className="pf-mantra-card">
-            <div className="who">{m.who}</div>
-            <div className="verb">{m.verb}</div>
-          </div>
-        ))}
       </div>
 
       <div className="mt-8 grid gap-3 lg:grid-cols-[repeat(5,minmax(0,1fr))]">

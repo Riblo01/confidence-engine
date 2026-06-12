@@ -13,7 +13,6 @@ import RiskDetectionPanel from './RiskDetectionPanel';
 import TrustDecisionCard from './TrustDecisionCard';
 import HumanFeedbackAction from './HumanFeedbackAction';
 import LearningMemoryUpdate from './LearningMemoryUpdate';
-import PresentationControls from './PresentationControls';
 import MissionControlSummary from './MissionControlSummary';
 import DecisionDistributionBar from './DecisionDistributionBar';
 import DecisionRouteCard from './DecisionRouteCard';
@@ -203,11 +202,7 @@ function PrimaryActionButton({
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
-interface Props {
-  presentationMode: boolean;
-}
-
-export default function MissionControl({ presentationMode }: Props) {
+export default function MissionControl() {
   const {
     state,
     scenario,
@@ -215,14 +210,9 @@ export default function MissionControl({ presentationMode }: Props) {
     selectScenario,
     submitFeedback,
     resetDemo,
-    toggleAutoPlay,
     currentReadyStep,
     allComplete,
   } = useMissionControl();
-
-  const completedCount = MISSION_STEPS.filter(
-    (s) => state.stepStatuses[s.id] === 'completed',
-  ).length;
 
   const startCompleted = state.stepStatuses.start === 'completed';
   const handleSelectRoute = (id: string) => {
@@ -233,7 +223,7 @@ export default function MissionControl({ presentationMode }: Props) {
   };
 
   return (
-    <div className={`mc-shell ${presentationMode ? 'mc-presentation' : ''}`}>
+    <div className="mc-shell">
       <div className="mc-intake">
         <div className="mc-executive-head">
           <div>
@@ -341,25 +331,6 @@ export default function MissionControl({ presentationMode }: Props) {
         )}
       </section>
 
-      {/* ── PRESENTATION CONTROLS ─────────────────────────────────────────── */}
-      {presentationMode && (
-        <PresentationControls
-          autoPlay={state.autoPlay}
-          currentReadyStep={currentReadyStep}
-          allComplete={allComplete}
-          completedCount={completedCount}
-          onToggleAutoPlay={toggleAutoPlay}
-          onNext={() => {
-            if (!currentReadyStep) return;
-            if (currentReadyStep === 'submit_feedback') {
-              submitFeedback(scenario.feedbackOptions[0]);
-              return;
-            }
-            advanceMissionStep(currentReadyStep);
-          }}
-          onReset={resetDemo}
-        />
-      )}
     </div>
   );
 }

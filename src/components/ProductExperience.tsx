@@ -7,7 +7,7 @@ import { calculateTemplateScore } from '../scoring/templateEngine';
 
 import ProductFlowNavigator from './ProductFlowNavigator';
 import InvestigationSection from './InvestigationSection';
-import SimulationWorkspace from './SimulationWorkspace';
+import ProductFlowChapter from './ProductFlowChapter';
 import BeforeAfterTrustStory from './BeforeAfterTrustStory';
 import ProductPositioningScreen from './ProductPositioningScreen';
 import UniversalValidationExample from './UniversalValidationExample';
@@ -199,12 +199,45 @@ export default function ProductExperience() {
             whyMatters="This is the 60-second explanation of the product."
           >
             <div className="stacked-product-section">
-              <BeforeAfterTrustStory />
-              <SimulationWorkspace />
-              <ProductPositioningScreen />
-              <UniversalValidationExample />
-              <GeneralProductScope />
-              <InputContractSection />
+              <ProductFlowChapter
+                index={1}
+                title="The problem and the answer"
+                summary="AI output is moving faster than trust controls — Confidence Engine is the layer in between."
+              >
+                <ProductPositioningScreen />
+              </ProductFlowChapter>
+
+              <ProductFlowChapter
+                index={2}
+                title="What the product is"
+                summary="A validation engine for any AI-generated output. It never generates — it evaluates."
+              >
+                <GeneralProductScope />
+              </ProductFlowChapter>
+
+              <ProductFlowChapter
+                index={3}
+                title="What changes with it"
+                summary="The same AI output: acted on blindly, or validated into a safe action."
+              >
+                <BeforeAfterTrustStory />
+              </ProductFlowChapter>
+
+              <ProductFlowChapter
+                index={4}
+                title="One output, end to end"
+                summary="A generated answer validated against evidence, scored, and routed to a trust decision."
+              >
+                <UniversalValidationExample />
+              </ProductFlowChapter>
+
+              <ProductFlowChapter
+                index={5}
+                title="How it plugs in"
+                summary="Your agents do not change — they send one standard JSON contract."
+              >
+                <InputContractSection />
+              </ProductFlowChapter>
             </div>
           </InvestigationSection>
         )}
