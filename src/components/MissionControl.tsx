@@ -223,10 +223,6 @@ export default function MissionControl() {
           <div>
             <span>Evaluation intake</span>
             <h2>Select an AI-generated output and run the confidence pipeline.</h2>
-            <p>
-              The final route is intentionally hidden until the evaluation finishes. Use the scenario list below,
-              then execute the workflow step by step.
-            </p>
           </div>
           <PilotModeInfoPanel />
         </div>

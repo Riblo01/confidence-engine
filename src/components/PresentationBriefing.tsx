@@ -53,7 +53,6 @@ export default function PresentationBriefing() {
       <section className="presentation-brief-hero">
         <span>Executive storyline</span>
         <strong>Trustworthy AI needs a decision layer, not just better generation.</strong>
-        <p>Use this screen to explain the product in one minute before entering the interactive demo.</p>
       </section>
 
       <div className="presentation-grid">
