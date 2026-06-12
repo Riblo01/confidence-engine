@@ -6704,18 +6704,30 @@ body {
 
 .mc-ai-card--empty {
   align-items: center;
-  color: var(--mc-muted);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.06), rgba(59, 130, 246, 0.04));
+  border: 1.5px dashed rgba(99, 102, 241, 0.35);
+  color: #94a3b8;
   display: flex;
   flex-direction: column;
-  font-size: 12.5px;
-  gap: 8px;
+  font-size: 13px;
+  gap: 10px;
   justify-content: center;
-  min-height: 96px;
+  min-height: 130px;
   text-align: center;
 }
 
+.mc-ai-card--empty p {
+  line-height: 1.5;
+  max-width: 180px;
+}
+
+.mc-ai-card--empty strong {
+  color: #a5b4fc;
+}
+
 .mc-ai-card-empty-icon {
-  color: #374151;
+  color: #6366f1;
+  opacity: 0.75;
 }
 
 .mc-ai-card-header {
