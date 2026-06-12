@@ -1,10 +1,24 @@
-import { AlertTriangle, ArrowRight, Building2, ShieldCheck, Sparkles, UserCheck } from 'lucide-react';
+import {
+  AlertTriangle,
+  ArrowRight,
+  BookOpen,
+  Building2,
+  ShieldCheck,
+  Sparkles,
+  UserCheck,
+} from 'lucide-react';
 
 const positioningFlow = [
   { label: 'External systems generate.', Icon: Sparkles, color: '#9da7b3' },
   { label: 'Confidence Engine evaluates.', Icon: ShieldCheck, color: '#2dd4bf' },
   { label: 'Humans decide.', Icon: UserCheck, color: '#3b82f6' },
   { label: 'Organizations learn.', Icon: Building2, color: '#f59e0b' },
+];
+
+const researchSignals = [
+  { label: 'Raw AI output', value: 'Fast but unverified', ref: 'Generated response', tone: 'risk' },
+  { label: 'Evidence validation', value: 'Checks facts, gaps and contradictions', ref: 'Trust evaluation', tone: 'validated' },
+  { label: 'Trust decision', value: 'Approve, review or block', ref: 'Action routing', tone: 'lift' },
 ];
 
 export default function ProductPositioningScreen() {
@@ -23,6 +37,28 @@ export default function ProductPositioningScreen() {
             decide whether those outputs are safe to act on.
           </p>
         </div>
+      </div>
+
+      <div className="positioning-research">
+        <div className="positioning-research-head">
+          <BookOpen size={16} />
+          <div>
+            <span>Why validation matters</span>
+            <strong>AI-generated analysis is useful, but not sufficient on its own for operational decisions.</strong>
+          </div>
+        </div>
+        <div className="positioning-research-grid">
+          {researchSignals.map((item) => (
+            <article key={item.label} className={`positioning-research-card ${item.tone}`}>
+              <span>{item.label}</span>
+              <strong>{item.value}</strong>
+              <small>{item.ref}</small>
+            </article>
+          ))}
+        </div>
+        <p>
+          The missing layer is not more generation. The missing layer is validation before action.
+        </p>
       </div>
 
       <div className="positioning-solution">

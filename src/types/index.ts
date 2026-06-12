@@ -274,6 +274,8 @@ export interface MissionScenario {
   title: string;
   domain: string;
   badge: string;
+  useCaseName: string;
+  generatedOutputType: string;
   aiGeneratedOutput: string;
   inputContract: MissionInputContract;
   evidenceSources: MissionEvidenceSource[];
@@ -282,6 +284,10 @@ export interface MissionScenario {
   contradictions: string[];
   finalScore: number;
   finalVerdict: 'Trusted' | 'Needs Human Review' | 'Low Confidence';
+  decisionRoute: 'Proceed' | 'Route to Human Review' | 'Blocked';
+  mainReason: string;
+  keyRisk: string;
+  evidenceStatus: string;
   recommendedAction: string;
   feedbackOptions: string[];
   learningUpdate: MissionLearningUpdate[];

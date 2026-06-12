@@ -76,11 +76,13 @@ export function calculateTemplateScore(template: EvaluationTemplate): TemplateSc
       maxContribution = contribution;
       biggestContributor = d;
     }
-    // Risk = weighted points lost vs a perfect 100 on this dimension.
-    const risk = (100 - effectiveScore(d)) * d.weight;
-    if (risk > maxRisk) {
-      maxRisk = risk;
-      biggestRiskContributor = d;
+    // Downgrade risk should only come from dimensions explicitly modeled as risk.
+    if (isRiskDimension(d)) {
+      const risk = d.example_score * d.weight;
+      if (risk > maxRisk) {
+        maxRisk = risk;
+        biggestRiskContributor = d;
+      }
     }
   }
 

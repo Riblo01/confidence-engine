@@ -2,33 +2,21 @@ import { useMemo, useState } from 'react';
 import type { EvaluationTemplate } from '../types';
 import { productFlowSteps, k8sDemoStep, K8S_DEMO_STEP_ID } from '../data/productFlow';
 import { evaluationTemplates, getTemplateById } from '../data/evaluationTemplates';
-import { adaptivePilot } from '../data/adaptivePilot';
 import { calculateTemplateScore } from '../scoring/templateEngine';
 
 import ProductFlowNavigator from './ProductFlowNavigator';
-import StrategicFlowDiagram from './StrategicFlowDiagram';
 import InvestigationSection from './InvestigationSection';
-import SimulationWorkspace from './SimulationWorkspace';
+import ProductFlowChapter from './ProductFlowChapter';
+import PresentationBriefing from './PresentationBriefing';
 import BeforeAfterTrustStory from './BeforeAfterTrustStory';
 import ProductPositioningScreen from './ProductPositioningScreen';
-import UniversalValidationExample from './UniversalValidationExample';
 import GeneralProductScope from './GeneralProductScope';
-import InputContractSection from './InputContractSection';
 import ConfigurationLayerSection from './ConfigurationLayerSection';
 import ConfigurationWorkbench from './ConfigurationWorkbench';
-import RuntimeEvaluationLayer from './RuntimeEvaluationLayer';
 import TrustDecisionCenter from './TrustDecisionCenter';
 import InputOutputSimulator from './InputOutputSimulator';
-import BusinessImpactDashboard from './BusinessImpactDashboard';
-import HumanFeedbackLearningPanel from './HumanFeedbackLearningPanel';
-import LearningNarrativeFlow from './LearningNarrativeFlow';
-import AdaptivePilotFlow from './AdaptivePilotFlow';
-import SharedMemoryPanel from './SharedMemoryPanel';
-import GovernanceAuditTrail from './GovernanceAuditTrail';
-import MultiAgentConsensusValidation from './MultiAgentConsensusValidation';
-import FutureArchitectureRoadmap from './FutureArchitectureRoadmap';
+import LearningGovernanceOverview from './LearningGovernanceOverview';
 import KubernetesRcaDemo from './KubernetesRcaDemo';
-import UseCaseExpansionPanel from './UseCaseExpansionPanel';
 
 function rebalanceEnabledWeights(
   dimensions: EvaluationTemplate['dimensions'],
@@ -116,9 +104,17 @@ function redistributeWeights(
   });
 }
 
+const PF_CHAPTERS = [
+  { index: 1, title: 'Presentation brief',          summary: 'The exact storyline to cover in the hackathon pitch.' },
+  { index: 2, title: 'The problem and the answer',  summary: 'AI output is moving faster than trust controls — Confidence Engine is the layer in between.' },
+  { index: 3, title: 'What the product is',          summary: 'A validation engine for any AI-generated output. It never generates — it evaluates.' },
+  { index: 4, title: 'What changes with it',         summary: 'The same AI output: acted on blindly, or validated into a safe action.' },
+] as const;
+
 export default function ProductExperience() {
   const [activeStepId, setActiveStepId] = useState('product-flow');
   const [visitedSteps, setVisitedSteps] = useState<Set<string>>(() => new Set(['product-flow']));
+  const [activeChapter, setActiveChapter] = useState(1);
   const [selectedTemplateId, setSelectedTemplateId] = useState('kubernetes_rca');
   const [workingTemplate, setWorkingTemplate] = useState<EvaluationTemplate>(() =>
     cloneTemplate('kubernetes_rca'),
@@ -126,7 +122,6 @@ export default function ProductExperience() {
   const [pilotApplied, setPilotApplied] = useState(false);
 
   const scoreResult = useMemo(() => calculateTemplateScore(workingTemplate), [workingTemplate]);
-  const canApplyPilot = selectedTemplateId === adaptivePilot.baseline_template_id;
 
   function handleNavigate(stepId: string) {
     setActiveStepId(stepId);
@@ -164,21 +159,6 @@ export default function ProductExperience() {
     setPilotApplied(false);
   }
 
-  function handleApplyPilotSuggestion() {
-    if (!canApplyPilot) return;
-
-    setWorkingTemplate((prev) => ({
-      ...prev,
-      dimensions: rebalanceEnabledWeights(
-        prev.dimensions.map((d) => {
-          const adjustment = adaptivePilot.adjustments.find((a) => a.dimension_id === d.id);
-          return adjustment ? { ...d, weight: adjustment.after } : d;
-        }),
-      ),
-    }));
-    setPilotApplied(true);
-  }
-
   return (
     <div className="pf-layout">
       <ProductFlowNavigator
@@ -190,12 +170,6 @@ export default function ProductExperience() {
       />
 
       <div className="pf-content">
-        <StrategicFlowDiagram
-          activeStepId={activeStepId}
-          visitedSteps={visitedSteps}
-          onNavigate={handleNavigate}
-        />
-
         {activeStepId === 'product-flow' && (
           <InvestigationSection
             kicker="Area 01"
@@ -204,15 +178,39 @@ export default function ProductExperience() {
             whatDoes="It shows how raw AI output becomes a governed trust decision."
             howWorks="Input is normalized, evaluated, routed to a trust decision, validated by humans and fed back into learning."
             whyMatters="This is the 60-second explanation of the product."
+            hideBrief
           >
-            <div className="stacked-product-section">
-              <BeforeAfterTrustStory />
-              <SimulationWorkspace />
-              <ProductPositioningScreen />
-              <UniversalValidationExample />
-              <GeneralProductScope />
-              <InputContractSection />
+            <div className="pf-chapter-picker">
+              {PF_CHAPTERS.map((ch) => (
+                <button
+                  key={ch.index}
+                  className={`pf-chapter-tab${activeChapter === ch.index ? ' active' : ''}`}
+                  onClick={() => setActiveChapter(ch.index)}
+                >
+                  <span className="pf-chapter-tab-num">{String(ch.index).padStart(2, '0')}</span>
+                  <span className="pf-chapter-tab-label">{ch.title}</span>
+                </button>
+              ))}
             </div>
+
+            {(() => {
+              const ch = PF_CHAPTERS.find((chapter) => chapter.index === activeChapter) ?? PF_CHAPTERS[0];
+              const chapterIndex = ch.index;
+              return (
+                <ProductFlowChapter
+                  key={chapterIndex}
+                  index={ch.index}
+                  title={ch.title}
+                  summary={ch.summary}
+                  hideHeader
+                >
+                  {chapterIndex === 1 && <PresentationBriefing />}
+                  {chapterIndex === 2 && <ProductPositioningScreen />}
+                  {chapterIndex === 3 && <GeneralProductScope />}
+                  {chapterIndex === 4 && <BeforeAfterTrustStory />}
+                </ProductFlowChapter>
+              );
+            })()}
           </InvestigationSection>
         )}
 
@@ -224,6 +222,7 @@ export default function ProductExperience() {
             whatDoes="It lets users select templates, tune dimensions, adjust weights and inspect rules."
             howWorks="Every interaction updates the score model, formula and decision logic used by runtime evaluation."
             whyMatters="This is the most important proof that the product is configurable, not hardcoded."
+            hideBrief
           >
             <ConfigurationLayerSection>
               <ConfigurationWorkbench
@@ -249,10 +248,10 @@ export default function ProductExperience() {
             whatDoes="It shows how different AI outputs are evaluated into score, risks and decision."
             howWorks="Select an input type, inspect evidence checks and review the generated trust decision."
             whyMatters="Users understand the system by interacting with realistic examples instead of reading documentation."
+            hideBrief
           >
             <div className="stacked-product-section">
               <InputOutputSimulator />
-              <RuntimeEvaluationLayer template={workingTemplate} result={scoreResult} />
               <TrustDecisionCenter />
             </div>
           </InvestigationSection>
@@ -266,38 +265,9 @@ export default function ProductExperience() {
             whatDoes="It captures human feedback, stores confidence memory, tracks value and keeps decision records."
             howWorks="Feedback becomes patterns, patterns evolve templates, and audit records explain why decisions were made."
             whyMatters="This is what makes the product credible for enterprise and regulated workflows."
+            hideBrief
           >
-            <div className="stacked-product-section">
-              <LearningNarrativeFlow />
-              <HumanFeedbackLearningPanel />
-              <AdaptivePilotFlow
-                pilot={adaptivePilot}
-                workingTemplate={workingTemplate}
-                pilotApplied={pilotApplied}
-                canApplyPilot={canApplyPilot}
-                onApplySuggestion={handleApplyPilotSuggestion}
-              />
-              <BusinessImpactDashboard />
-              <SharedMemoryPanel />
-              <GovernanceAuditTrail />
-            </div>
-          </InvestigationSection>
-        )}
-
-        {activeStepId === 'use-cases' && (
-          <InvestigationSection
-            kicker="Area 05"
-            title="Use Cases"
-            whatIs="The domains where the same confidence engine can be applied."
-            whatDoes="It shows Kubernetes RCA plus support, compliance, security, code and multi-agent validation."
-            howWorks="The core stays the same; templates and evidence requirements change by domain."
-            whyMatters="This proves the product is a platform, not a single-purpose Kubernetes demo."
-          >
-            <div className="stacked-product-section">
-              <UseCaseExpansionPanel />
-              <MultiAgentConsensusValidation />
-              <FutureArchitectureRoadmap />
-            </div>
+            <LearningGovernanceOverview />
           </InvestigationSection>
         )}
 

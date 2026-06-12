@@ -1,4 +1,4 @@
-import { MonitorPlay, ShieldCheck, Zap, LayoutGrid } from 'lucide-react';
+import { ShieldCheck, Zap, LayoutGrid } from 'lucide-react';
 
 const evaluates = [
   { label: 'Incident RCA',        color: '#3b82f6' },
@@ -10,16 +10,12 @@ const evaluates = [
 ];
 
 interface Props {
-  presentationMode: boolean;
   explorerMode: boolean;
-  onTogglePresentation: () => void;
   onToggleExplorer: () => void;
 }
 
 export default function AppHeader({
-  presentationMode,
   explorerMode,
-  onTogglePresentation,
   onToggleExplorer,
 }: Props) {
   return (
@@ -57,14 +53,6 @@ export default function AppHeader({
                 Platform Explorer
               </button>
             </div>
-
-            <button
-              className={`presentation-toggle ${presentationMode ? 'active' : ''}`}
-              onClick={onTogglePresentation}
-            >
-              <MonitorPlay size={15} />
-              {presentationMode ? 'Presentation On' : 'Presentation Mode'}
-            </button>
 
             <div className="app-hero-tags">
               {evaluates.map((b) => (

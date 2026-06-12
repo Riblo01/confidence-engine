@@ -1,15 +1,19 @@
 import { motion } from 'framer-motion';
-import { type LucideIcon, Server, Shield } from 'lucide-react';
+import { type LucideIcon, Code2, Headphones, Server, Shield } from 'lucide-react';
 import type { MissionScenario } from '../types';
 
 const DOMAIN_ICONS: Record<string, LucideIcon> = {
   Infrastructure: Server,
   Security: Shield,
+  'Customer Experience': Headphones,
+  'Software Engineering': Code2,
 };
 
 const DOMAIN_COLORS: Record<string, string> = {
   Infrastructure: '#3b82f6',
   Security: '#ef4444',
+  'Customer Experience': '#22c55e',
+  'Software Engineering': '#8b5cf6',
 };
 
 interface Props {

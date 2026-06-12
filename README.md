@@ -2,6 +2,8 @@
 
 > Hackathon-ready demo · React + TypeScript + Tailwind CSS · Zero backend · All mock data
 
+Public repo: [github.com/Riblo01/confidence-engine](https://github.com/Riblo01/confidence-engine)
+
 ---
 
 ## What Is This?
@@ -11,6 +13,13 @@ The **AI Confidence Engine** is a validation layer that sits between an AI DevOp
 It answers one critical question: **Can I trust this AI-generated RCA?**
 
 It does NOT generate RCA itself. It receives an RCA already produced from an AI SRE analysis prompt or any AI triage assistant and evaluates whether that RCA is trustworthy, evidence-complete, consistent, and operationally sound.
+
+For the current product narrative and presentation assets, use:
+
+- [Docs index](docs/README.md)
+- [Main flow diagram](docs/visuals/ai-confidence-engine-main-flow.excalidraw)
+- [Main flow PNG](docs/visuals/ai-confidence-engine-main-flow.png)
+- [5-minute speech](docs/presentation/ai-confidence-engine-speech.md)
 
 ---
 
