@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, RotateCcw, Zap } from 'lucide-react';
+import { Play, RotateCcw } from 'lucide-react';
 import { useMissionControl } from '../hooks/useMissionControl';
 import { missionScenarios, MISSION_STEPS } from '../data/missionScenarios';
 import type { MissionStepId } from '../types';
@@ -125,12 +125,7 @@ function ActiveContent({
   if (s.parse_contract === 'completed') {
     return <InputContractPanel contract={scenario.inputContract} />;
   }
-  return (
-    <div className="mc-content-empty">
-      <Zap size={28} className="mc-content-empty-icon" />
-      <p>Click <strong>Start Evaluation</strong> to begin the pipeline</p>
-    </div>
-  );
+  return <AiInputCard scenario={scenario} visible={s.start === 'completed'} />;
 }
 
 // ─── Primary action button ────────────────────────────────────────────────────
@@ -214,7 +209,6 @@ export default function MissionControl() {
     allComplete,
   } = useMissionControl();
 
-  const startCompleted = state.stepStatuses.start === 'completed';
   const handleSelectRoute = (id: string) => {
     selectScenario(id);
     window.setTimeout(() => {
@@ -255,7 +249,6 @@ export default function MissionControl() {
               selectedId={state.scenarioId}
               onSelect={handleSelectRoute}
             />
-            <AiInputCard scenario={scenario} visible={startCompleted} />
           </div>
 
           <div className="mc-center">
@@ -336,7 +329,7 @@ export default function MissionControl() {
               <article>
                 <span>Domain proof</span>
                 <strong>Kubernetes, support, code and SOC</strong>
-                <p>Open Proof & Use Cases in Platform Explorer for examples and integration detail.</p>
+                <p>Use the deep dive and scenario cards to explain how the engine adapts by domain.</p>
               </article>
               <article>
                 <span>Technical depth</span>
