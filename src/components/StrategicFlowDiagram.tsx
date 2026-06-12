@@ -11,9 +11,16 @@ interface Props {
 
 export default function StrategicFlowDiagram({ activeStepId, visitedSteps, onNavigate }: Props) {
   const [selectedStageId, setSelectedStageId] = useState<string | null>(null);
+
+  // A manual stage pick (used to disambiguate steps that map to more than one
+  // stage) is only honored while it still contains the active step. Once the
+  // user navigates elsewhere — e.g. via the sidebar — fall back to the stage
+  // derived from the active step so the track and IO panel stay in sync.
+  const selectedStage = strategicFlowStages.find((stage) => stage.id === selectedStageId);
   const activeStage =
-    strategicFlowStages.find((stage) => stage.id === selectedStageId) ??
-    getStrategicStageForStep(activeStepId);
+    selectedStage?.stepIds.includes(activeStepId)
+      ? selectedStage
+      : getStrategicStageForStep(activeStepId);
 
   return (
     <section className="strategy-flow" aria-label="Strategic input and output flow">
