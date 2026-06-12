@@ -327,6 +327,23 @@ export default function MissionControl() {
                 />
               ))}
             </div>
+            <div className="mc-secondary-proof">
+              <article>
+                <span>Scenario comparison</span>
+                <strong>Trusted, review and blocked routes</strong>
+                <p>Use route cards to explain how the same engine behaves across different risk levels.</p>
+              </article>
+              <article>
+                <span>Domain proof</span>
+                <strong>Kubernetes, support, code and SOC</strong>
+                <p>Open Proof & Use Cases in Platform Explorer for examples and integration detail.</p>
+              </article>
+              <article>
+                <span>Technical depth</span>
+                <strong>Kubernetes RCA deep dive</strong>
+                <p>Use the dedicated deep dive only after the decision workflow is clear.</p>
+              </article>
+            </div>
           </>
         )}
       </section>

@@ -7,6 +7,7 @@ interface Props {
   whatDoes: string;
   howWorks: string;
   whyMatters?: string;
+  hideBrief?: boolean;
   children: ReactNode;
 }
 
@@ -17,6 +18,7 @@ export default function InvestigationSection({
   whatDoes,
   howWorks,
   whyMatters,
+  hideBrief = false,
   children,
 }: Props) {
   return (
@@ -27,20 +29,22 @@ export default function InvestigationSection({
           <h2 className="display-title section-title">{title}</h2>
         </div>
 
-        <div className="stage-brief">
-          <article>
-            <span>Input</span>
-            <p>{whatIs}</p>
-          </article>
-          <article>
-            <span>Engine action</span>
-            <p>{whatDoes}</p>
-          </article>
-          <article>
-            <span>Output</span>
-            <p>{whyMatters ?? howWorks}</p>
-          </article>
-        </div>
+        {!hideBrief && (
+          <div className="stage-brief">
+            <article>
+              <span>Input</span>
+              <p>{whatIs}</p>
+            </article>
+            <article>
+              <span>Engine action</span>
+              <p>{whatDoes}</p>
+            </article>
+            <article>
+              <span>Output</span>
+              <p>{whyMatters ?? howWorks}</p>
+            </article>
+          </div>
+        )}
 
         <div className="section-body">{children}</div>
       </div>

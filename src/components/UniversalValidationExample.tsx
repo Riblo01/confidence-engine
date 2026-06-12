@@ -17,13 +17,19 @@ export default function UniversalValidationExample() {
         <p>{universalExample.sourceContext}</p>
       </div>
 
-      <div className="uv-flow">
-        {universalExample.flow.map((step, index) => (
-          <div key={step} className="uv-flow-step">
-            <span>{String(index + 1).padStart(2, '0')}</span>
-            <strong>{step}</strong>
-          </div>
-        ))}
+      <div className="uv-case-summary">
+        <article>
+          <span>Input</span>
+          <strong>Customer-facing AI response</strong>
+        </article>
+        <article>
+          <span>Issue detected</span>
+          <strong>Policy-sensitive promise without approval</strong>
+        </article>
+        <article>
+          <span>Route</span>
+          <strong>{universalExample.decision.label}</strong>
+        </article>
       </div>
 
       <div className="uv-grid">

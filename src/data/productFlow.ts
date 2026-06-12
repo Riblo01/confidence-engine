@@ -42,11 +42,11 @@ export const productFlowSteps: ProductFlowStep[] = [
   {
     id: 'use-cases',
     index: 5,
-    label: 'Use Cases',
-    title: 'Use Cases',
+    label: 'Proof & Use Cases',
+    title: 'Proof and Use Cases',
     kicker: 'Area 05',
     ownership: 'confidence_engine',
-    summary: 'Kubernetes RCA, support, compliance, security, code and multi-agent validation.',
+    summary: 'Domain examples, integration contract and advanced validation patterns.',
   },
 ];
 
