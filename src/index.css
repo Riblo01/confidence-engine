@@ -5094,6 +5094,18 @@ body {
   max-width: 900px;
 }
 
+.proof-core-label {
+  align-items: center;
+  border: 1px solid rgba(20, 184, 166, 0.22);
+  border-radius: 10px;
+  color: #5eead4;
+  display: flex;
+  font-size: 0.8rem;
+  font-weight: 500;
+  gap: 0.5rem;
+  padding: 0.55rem 0.9rem;
+}
+
 .proof-domain-grid {
   display: grid;
   gap: 0.8rem;

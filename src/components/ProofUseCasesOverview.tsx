@@ -52,16 +52,14 @@ export default function ProofUseCasesOverview() {
         </p>
       </section>
 
-      <section className="proof-hub" aria-label="Proof use case engine map">
-        <div className="proof-hub-center">
-          <ShieldCheck size={24} />
-          <span>Confidence Engine</span>
-          <strong>One trust core</strong>
-          <p>Templates adapt. Evidence changes. The decision layer stays consistent.</p>
-        </div>
+      <div className="proof-core-label">
+        <ShieldCheck size={15} />
+        <span>One trust core — templates adapt, evidence changes, the decision layer stays consistent</span>
+      </div>
 
-        {domains.map(({ label, detail, Icon, color }, index) => (
-          <article key={label} className={`proof-domain-card domain-${index + 1}`}>
+      <section className="proof-domain-grid" aria-label="Supported domains">
+        {domains.map(({ label, detail, Icon, color }) => (
+          <article key={label} className="proof-domain-card">
             <div className="proof-domain-icon" style={{ color, borderColor: `${color}42`, background: `${color}18` }}>
               <Icon size={19} />
             </div>
